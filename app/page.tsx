@@ -8,6 +8,8 @@ import ImageWithFallback from "@/components/ImageWithFallback"
 import AnimatedCounter from "@/components/AnimatedCounter"
 import MascotButton from "@/components/MascotButton"
 import TodayInHistory from "@/components/TodayInHistory"
+import BreakingTicker from "@/components/BreakingTicker"
+import AutoRefreshNews from "@/components/AutoRefreshNews"
 import { getAllPosts, seedIfEmpty } from "@/lib/posts"
 import { categoryLabel, getPostCoverImage } from "@/lib/types"
 
@@ -24,7 +26,7 @@ export default async function HomePage() {
   const posts = allPosts.filter((p) => p.published)
   const featured = posts.find((p) => p.featured) || posts[0]
   const sideStack = posts.filter((p) => p.id !== featured?.id).slice(0, 3)
-  const tickerText = posts.map((p) => p.title).join("   ✦   ")
+  const tickerItems = posts.slice(0, 25).map((p) => p.title)
 
   const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0)
   const totalReadMinutes = posts.reduce(
@@ -51,70 +53,10 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Navbar />
+      <AutoRefreshNews />
 
       {/* Breaking News Ticker */}
-      {posts.length > 0 && (
-        <section
-          style={{
-            background: "linear-gradient(90deg, #E8643A, #F07550, #C94FAE, #667eea, #E8643A)",
-            backgroundSize: "300% 100%",
-            animation: "gradientShift 12s ease infinite",
-            height: "34px",
-            display: "flex",
-            alignItems: "center",
-            overflow: "hidden",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)"
-          }}
-          aria-label="Breaking News Ticker"
-        >
-          <div
-            style={{
-              flexShrink: 0,
-              padding: "0 16px",
-              background: "rgba(0, 0, 0, 0.3)",
-              height: "100%",
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-              fontSize: "13px",
-              letterSpacing: "0.15em",
-              color: "#fff",
-              whiteSpace: "nowrap"
-            }}
-          >
-            <span style={{ fontSize: "14px" }}>⚡</span>
-            <span>BREAKING</span>
-            <span
-              style={{
-                width: "6px",
-                height: "6px",
-                borderRadius: "50%",
-                background: "#fff",
-                animation: "pulse-dot 1.5s ease-in-out infinite",
-                display: "inline-block",
-                marginLeft: "2px"
-              }}
-            />
-          </div>
-          <div className="ticker-wrap" style={{ flex: 1 }}>
-            <div className="ticker-content">
-              <span
-                style={{
-                  padding: "0 28px",
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  color: "#fff",
-                  fontFamily: "var(--font-inter, system-ui, sans-serif)",
-                  letterSpacing: "0.02em"
-                }}
-              >
-                {tickerText}&nbsp;&nbsp;&nbsp;&nbsp;✦&nbsp;&nbsp;&nbsp;&nbsp;{tickerText}
-              </span>
-            </div>
-          </div>
-        </section>
-      )}
+      <BreakingTicker items={tickerItems} />
 
       {/* Hero Section: 65% Featured + 35% Side Stack */}
       {featured && (

@@ -4,6 +4,30 @@ import { type Post, type QueuedStory } from "./types"
 import { fetchAllRawNews, formatAndRewriteNewsItem } from "./newsAggregator"
 
 const QUEUE_KEY = "news_queue"
+const LAST_CRAWL_KEY = "last_crawl_at"
+
+/** Stories sitting in the review queue longer than this get auto-published */
+const AUTO_PUBLISH_AGE_MS = 24 * 60 * 60 * 1000
+const AUTO_PUBLISH_MAX_PER_CRAWL = 5
+
+export async function getLastCrawlTime(): Promise<number | null> {
+  try {
+    const raw = await redis.get(LAST_CRAWL_KEY)
+    const ts = typeof raw === "string" ? parseInt(raw, 10) : NaN
+    return Number.isFinite(ts) && ts > 0 ? ts : null
+  } catch (error) {
+    console.error("Error reading last crawl time:", error)
+    return null
+  }
+}
+
+async function setLastCrawlTime(): Promise<void> {
+  try {
+    await redis.set(LAST_CRAWL_KEY, Date.now().toString())
+  } catch (error) {
+    console.error("Error saving last crawl time:", error)
+  }
+}
 
 function parseQueue(data: unknown): QueuedStory[] {
   if (Array.isArray(data)) {
@@ -40,9 +64,16 @@ export async function saveQueue(queue: QueuedStory[]): Promise<void> {
 }
 
 /**
- * Crawl news sources, run AI rewriter, and add new stories to the review queue
+ * Crawl news sources, run AI rewriter, and add new stories to the review queue.
+ * Also auto-publishes stale pending stories so the site stays fresh on its own.
  */
-export async function crawlAndQueueNews(): Promise<{ addedCount: number; totalInQueue: number }> {
+export async function crawlAndQueueNews(): Promise<{
+  addedCount: number
+  totalInQueue: number
+  autoPublishedCount: number
+}> {
+  await setLastCrawlTime()
+
   const [existingQueue, existingPosts, rawNews] = await Promise.all([
     getQueuedStories(),
     getAllPosts(),
@@ -74,10 +105,44 @@ export async function crawlAndQueueNews(): Promise<{ addedCount: number; totalIn
   const updatedQueue = [...newQueuedItems, ...existingQueue]
   await saveQueue(updatedQueue)
 
+  const autoPublishedCount = await autoPublishStaleStories()
+
   return {
     addedCount: newQueuedItems.length,
-    totalInQueue: updatedQueue.filter((q) => q.status === "pending").length
+    totalInQueue: updatedQueue.filter((q) => q.status === "pending").length,
+    autoPublishedCount
   }
+}
+
+/**
+ * Auto-publishes pending queue stories that have been waiting long enough,
+ * so the breaking news ticker and homepage stay current without manual review.
+ */
+async function autoPublishStaleStories(): Promise<number> {
+  const queue = await getQueuedStories()
+  const cutoff = Date.now() - AUTO_PUBLISH_AGE_MS
+  let published = 0
+
+  for (const item of queue) {
+    if (published >= AUTO_PUBLISH_MAX_PER_CRAWL) break
+    if (item.status !== "pending") continue
+
+    const createdAt = new Date(item.createdAt).getTime()
+    if (!Number.isFinite(createdAt) || createdAt > cutoff) continue
+
+    // Safety guards: skip drafts that look incomplete or untrustworthy
+    if (!item.title || item.title.trim().length < 10) continue
+    if (!item.content || item.content.replace(/<[^>]*>/g, "").trim().length < 60) continue
+    if (!item.sourceUrl || !item.sourceUrl.startsWith("http")) continue
+
+    await approveAndPublishStory(item.id)
+    published++
+  }
+
+  if (published > 0) {
+    console.log(`Auto-published ${published} stale queued stories`)
+  }
+  return published
 }
 
 /**
