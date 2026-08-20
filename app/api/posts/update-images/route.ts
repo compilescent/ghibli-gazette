@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic"
 /**
  * Verified, High-Resolution Official Anime Key Visuals & Studio Artwork Map
  */
-export const OFFICIAL_POST_IMAGES: Record<string, string> = {
+const OFFICIAL_POST_IMAGES: Record<string, string> = {
   "miyazaki-new-feature-film-in-production":
     "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop",
   "demon-slayer-infinity-castle-trilogy-dates":
