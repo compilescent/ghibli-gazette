@@ -5,7 +5,7 @@ import Footer from "@/components/Footer"
 import PostCard from "@/components/PostCard"
 import ShareButtons from "@/components/ShareButtons"
 import QuickBriefing from "@/components/QuickBriefing"
-import AudioReader from "@/components/AudioReader"
+
 import MangaPanelLightbox from "@/components/MangaPanelLightbox"
 import ImageWithFallback from "@/components/ImageWithFallback"
 import { ReadingProgress } from "@/components/ReadingProgress"
@@ -223,8 +223,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           {/* 30-Second Quick Briefing & Key Facts Capsule */}
           <QuickBriefing post={post} />
 
-          {/* 1-Click Audio Narration Reader */}
-          <AudioReader title={post.title} content={post.content} />
+          
 
           {/* Opening Lead Excerpt */}
           {post.excerpt && (
