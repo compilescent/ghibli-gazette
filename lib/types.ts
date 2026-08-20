@@ -1,3 +1,5 @@
+import { resolveAccurateCoverImage } from "./imageDatabase"
+
 export type Category =
   | "ghibli-news"
   | "new-release"
@@ -78,42 +80,7 @@ export function isCategory(value: string | null | undefined): value is Category 
   return ["ghibli-news", "new-release", "review", "premiere", "general"].includes(value ?? "")
 }
 
-export function getPostCoverImage(post: { title?: string; category?: string; coverImage?: string }): string {
-  if (post.coverImage && post.coverImage.trim().length > 0) {
-    return post.coverImage
-  }
-
-  const title = (post.title || "").toLowerCase()
-
-  if (title.includes("heron") || title.includes("boy and the heron") || title.includes("oscar")) {
-    return "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=1200&auto=format&fit=crop"
-  }
-  if (title.includes("totoro") || title.includes("neighbor")) {
-    return "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop"
-  }
-  if (title.includes("park") || title.includes("theme park") || title.includes("aichi") || title.includes("mononoke")) {
-    return "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1200&auto=format&fit=crop"
-  }
-  if (title.includes("miyazaki") || title.includes("ghibli") || title.includes("spirited") || title.includes("howl")) {
-    return "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop"
-  }
-  if (title.includes("premiere") || title.includes("august") || title.includes("season") || title.includes("demon slayer") || title.includes("frieren") || title.includes("chainsaw")) {
-    return "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop"
-  }
-  if (title.includes("one piece") || title.includes("jujutsu") || title.includes("dragon ball") || title.includes("bleach")) {
-    return "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1200&auto=format&fit=crop"
-  }
-
-  switch (post.category) {
-    case "ghibli-news":
-      return "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop"
-    case "new-release":
-      return "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1200&auto=format&fit=crop"
-    case "review":
-      return "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop"
-    case "premiere":
-      return "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop"
-    default:
-      return "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1200&auto=format&fit=crop"
-  }
+export function getPostCoverImage(post: { title?: string; category?: string; coverImage?: string; excerpt?: string }): string {
+  const resolved = resolveAccurateCoverImage(post)
+  return resolved.url
 }

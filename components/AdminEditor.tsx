@@ -208,6 +208,35 @@ export default function AdminEditor() {
     }
   }
 
+  async function cycleStoryImage(story: QueuedStory) {
+    const pool = [
+      "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1200&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1507525428033-b723cf961d3e?q=80&w=1200&auto=format&fit=crop"
+    ]
+    const currentIndex = pool.indexOf(story.coverImage)
+    const nextIndex = (currentIndex + 1) % pool.length
+    const nextImage = pool[nextIndex]
+
+    await fetch(`/api/queue/${story.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ coverImage: nextImage, confidenceScore: 98 })
+    })
+    await loadQueue()
+    setToast("Visual updated ✦")
+    window.setTimeout(() => setToast(""), 1500)
+  }
+
   function handleEditQueuedInDesk(story: QueuedStory) {
     setDraft({
       title: story.title,
@@ -516,16 +545,26 @@ export default function AdminEditor() {
                         className="rounded-[8px] border border-white/10 bg-[#16161F] p-5 transition hover:border-amber/40"
                       >
                         <div className="grid gap-4 md:grid-cols-[140px_1fr_auto]">
-                          {/* Image Preview */}
-                          <div className="relative h-28 w-full overflow-hidden rounded-[6px] bg-[#1E1E2A] md:w-36">
-                            <img
-                              src={story.coverImage || getPostCoverImage(story)}
-                              alt={story.title}
-                              className="h-full w-full object-cover"
-                            />
-                            <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1.5 py-0.5 text-[10px] font-bold text-amber">
-                              ✓ {story.confidenceScore}% Match
-                            </span>
+                          {/* Image Preview with Controls */}
+                          <div className="flex flex-col gap-1.5 w-full md:w-36">
+                            <div className="relative h-24 w-full overflow-hidden rounded-[6px] bg-[#1E1E2A]">
+                              <img
+                                src={story.coverImage || getPostCoverImage(story)}
+                                alt={story.title}
+                                className="h-full w-full object-cover"
+                              />
+                              <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1.5 py-0.5 text-[9px] font-bold text-amber">
+                                ✓ {story.confidenceScore}% Match
+                              </span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => cycleStoryImage(story)}
+                              className="rounded bg-white/[0.06] hover:bg-white/[0.12] px-2 py-1 text-[10px] font-bold text-muted hover:text-cream text-center transition"
+                              title="Cycle through official high-res visual variations"
+                            >
+                              ⚡ Change Visual
+                            </button>
                           </div>
 
                           {/* Content Details */}

@@ -1,4 +1,5 @@
-import { type Category, type QueuedStory, getPostCoverImage } from "./types"
+import { type Category, type QueuedStory } from "./types"
+import { isValidArticleImageUrl, resolveAccurateCoverImage, upgradeSourceImageUrl } from "./imageDatabase"
 
 export interface RawNewsItem {
   title: string
@@ -58,6 +59,36 @@ function cleanHtmlText(raw: string): string {
     .trim()
 }
 
+/**
+ * Robust extraction of official studio artwork and key visuals from RSS XML
+ */
+function extractImageUrlFromRssItem(itemXml: string): string | undefined {
+  // 1. Check enclosure tag with image type
+  const enclosureMatch = itemXml.match(/<enclosure[^>]*url=["']([^"']+)["'][^>]*>/i)
+  if (enclosureMatch && isValidArticleImageUrl(enclosureMatch[1])) {
+    return upgradeSourceImageUrl(enclosureMatch[1])
+  }
+
+  // 2. Check media:content or media:thumbnail
+  const mediaContentMatch = itemXml.match(/<media:content[^>]*url=["']([^"']+)["'][^>]*>/i)
+  if (mediaContentMatch && isValidArticleImageUrl(mediaContentMatch[1])) {
+    return upgradeSourceImageUrl(mediaContentMatch[1])
+  }
+
+  const mediaThumbnailMatch = itemXml.match(/<media:thumbnail[^>]*url=["']([^"']+)["'][^>]*>/i)
+  if (mediaThumbnailMatch && isValidArticleImageUrl(mediaThumbnailMatch[1])) {
+    return upgradeSourceImageUrl(mediaThumbnailMatch[1])
+  }
+
+  // 3. Check embedded <img> tag in description or CDATA
+  const imgMatch = itemXml.match(/<img[^>]*src=["']([^"']+)["'][^>]*>/i)
+  if (imgMatch && isValidArticleImageUrl(imgMatch[1])) {
+    return upgradeSourceImageUrl(imgMatch[1])
+  }
+
+  return undefined
+}
+
 function parseRssXml(xml: string, sourceName: string): RawNewsItem[] {
   const items: RawNewsItem[] = []
   const itemMatches = xml.match(/<item[\s\S]*?<\/item>/gi) || xml.match(/<entry[\s\S]*?<\/entry>/gi) || []
@@ -66,7 +97,7 @@ function parseRssXml(xml: string, sourceName: string): RawNewsItem[] {
     const titleMatch = itemXml.match(/<title[^>]*>([\s\S]*?)<\/title>/i)
     const linkMatch =
       itemXml.match(/<link[^>]*>([\s\S]*?)<\/link>/i) ||
-      itemXml.match(/<link[^>]*href=["'](.*?)["']/i)
+      itemXml.match(/<link[^>]*href=["']([^"']+)["']/i)
     const descMatch =
       itemXml.match(/<description[^>]*>([\s\S]*?)<\/description>/i) ||
       itemXml.match(/<content[^>]*>([\s\S]*?)<\/content>/i) ||
@@ -85,15 +116,7 @@ function parseRssXml(xml: string, sourceName: string): RawNewsItem[] {
     const title = cleanHtmlText(rawTitle)
     const link = cleanHtmlText(rawLink).replace(/\s+/g, "")
     const description = cleanHtmlText(rawDesc)
-
-    // Extract image enclosure or media:thumbnail if present
-    const imageMatch =
-      itemXml.match(/<enclosure[^>]*url=["'](.*?)["']/i) ||
-      itemXml.match(/<media:thumbnail[^>]*url=["'](.*?)["']/i) ||
-      itemXml.match(/<media:content[^>]*url=["'](.*?)["']/i) ||
-      itemXml.match(/<img[^>]*src=["'](.*?)["']/i)
-
-    const imageUrl = imageMatch ? imageMatch[1].trim() : undefined
+    const imageUrl = extractImageUrlFromRssItem(itemXml)
 
     if (title && title.length > 5) {
       items.push({
@@ -102,7 +125,7 @@ function parseRssXml(xml: string, sourceName: string): RawNewsItem[] {
         pubDate: rawDate,
         description: description || title,
         source: sourceName,
-        imageUrl: imageUrl && imageUrl.startsWith("http") ? imageUrl : undefined
+        imageUrl
       })
     }
   }
@@ -215,7 +238,7 @@ export function formatAndRewriteNewsItem(item: RawNewsItem): QueuedStory {
   }
 
   // 2. AI Rewritten Headline
-  let polishedTitle = item.title
+  const polishedTitle = item.title
     .replace(/^\[.*?\]\s*/, "") // Strip brackets like [News]
     .replace(/^REPORT:\s*/i, "")
     .replace(/^WATCH:\s*/i, "")
@@ -223,10 +246,6 @@ export function formatAndRewriteNewsItem(item: RawNewsItem): QueuedStory {
     .replace(/\s*\|\s*CBR$/i, "")
     .replace(/\s*-\s*Kotaku$/i, "")
     .trim()
-
-  if (!polishedTitle.endsWith(".") && !polishedTitle.endsWith("?") && !polishedTitle.endsWith("!")) {
-    // Keep clean editorial casing
-  }
 
   // 3. Editorial Excerpt
   let excerpt = item.description
@@ -277,8 +296,22 @@ export function formatAndRewriteNewsItem(item: RawNewsItem): QueuedStory {
   if (tags.length === 0) tags.push("Anime News", "Industry Wire", category.replace("-", " "))
 
   // 6. Matched Cover Image & Confidence Score
-  const coverImage = getPostCoverImage({ title: polishedTitle, category })
-  const confidenceScore = Math.floor(95 + Math.random() * 5) // 95% - 99%
+  // Prioritize authentic image from source, otherwise resolve via official franchise visual database
+  let coverImage = ""
+  let confidenceScore = 95
+
+  if (item.imageUrl && isValidArticleImageUrl(item.imageUrl)) {
+    coverImage = upgradeSourceImageUrl(item.imageUrl)
+    confidenceScore = 99 // Authentic official source image
+  } else {
+    const resolved = resolveAccurateCoverImage({
+      title: polishedTitle,
+      excerpt,
+      category
+    })
+    coverImage = resolved.url
+    confidenceScore = resolved.matchType === "franchise" ? 98 : 95
+  }
 
   const uniqueId = `queue-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`
 
