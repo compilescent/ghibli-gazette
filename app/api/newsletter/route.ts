@@ -67,6 +67,20 @@ async function sendConfirmationEmail(email: string, token: string) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Simple rate limit: max 3 subscribe attempts per IP per hour
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
+    const rateKey = `newsletter:rl:${ip}`
+    const attempts = await redis.incr(rateKey)
+    if (attempts === 1) {
+      await redis.expire(rateKey, 3600)
+    }
+    if (attempts > 3) {
+      return NextResponse.json(
+        { error: "Too many subscription attempts. Please try again later." },
+        { status: 429 }
+      )
+    }
+
     const { email } = await request.json()
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

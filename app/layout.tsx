@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Bebas_Neue, Inter, Libre_Baskerville } from "next/font/google"
 import "./globals.css"
 import ScrollProgress from "@/components/ScrollProgress"
+import KonamiMode from "@/components/KonamiMode"
 
 const bebas = Bebas_Neue({
   weight: "400",
@@ -25,8 +26,36 @@ const baskerville = Libre_Baskerville({
 })
 
 export const metadata: Metadata = {
-  title: "Ghibli Gazette — Anime & Studio Ghibli News",
-  description: "Your premier source for Studio Ghibli news, anime reviews, new releases, and seasonal premieres."
+  metadataBase: new URL("https://ghibli-gazette.vercel.app"),
+  title: {
+    default: "Ghibli Gazette — Anime & Manga News Hub",
+    template: "%s | Ghibli Gazette"
+  },
+  description:
+    "Your anime & manga news hub: breaking anime news, manga updates, reviews, new releases, seasonal premieres, and industry intel — updated daily.",
+  keywords: [
+    "anime news",
+    "manga news",
+    "anime releases",
+    "seasonal anime",
+    "Studio Ghibli",
+    "anime reviews",
+    "industry intel",
+    "anime updates"
+  ],
+  openGraph: {
+    type: "website",
+    url: "https://ghibli-gazette.vercel.app",
+    siteName: "Ghibli Gazette",
+    title: "Ghibli Gazette — Anime & Manga News Hub",
+    description: "Breaking anime news, manga updates, reviews, releases, premieres, and industry intel.",
+    locale: "en_US"
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ghibli Gazette — Anime & Manga News Hub",
+    description: "Breaking anime news, manga updates, reviews, releases, premieres, and industry intel."
+  }
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -34,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${bebas.variable} ${inter.variable} ${baskerville.variable}`}>
       <body>
         <ScrollProgress />
+        <KonamiMode />
         {children}
       </body>
     </html>

@@ -3,17 +3,21 @@ import { notFound } from "next/navigation"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import PostCard from "@/components/PostCard"
+import MascotButton from "@/components/MascotButton"
 import { getAllPosts, seedIfEmpty } from "@/lib/posts"
 import { categoryLabel, getPostCoverImage, isCategory } from "@/lib/types"
 
 export const dynamic = "force-dynamic"
 
 const catImages: Record<string, string> = {
-  "ghibli-news": "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1400&auto=format&fit=crop",
+  "anime-news": "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1400&auto=format&fit=crop",
+  "manga-news": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1400&auto=format&fit=crop",
   "new-release": "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1400&auto=format&fit=crop",
-  "review": "https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1400&auto=format&fit=crop",
-  "premiere": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1400&auto=format&fit=crop",
-  "general": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1400&auto=format&fit=crop"
+  "review": "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1400&auto=format&fit=crop",
+  "premiere": "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?q=80&w=1400&auto=format&fit=crop",
+  "industry": "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=1400&auto=format&fit=crop",
+  "general": "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=1400&auto=format&fit=crop",
+  "ghibli-news": "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1400&auto=format&fit=crop"
 }
 
 export default async function CategoryPage({ params }: { params: { cat: string } }) {
@@ -91,7 +95,7 @@ export default async function CategoryPage({ params }: { params: { cat: string }
               fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
               fontSize: "clamp(28px, 5vw, 48px)",
               fontWeight: 700,
-              color: "#fff",
+              color: "var(--text-primary)",
               margin: 0
             }}
           >
@@ -135,7 +139,7 @@ export default async function CategoryPage({ params }: { params: { cat: string }
                 style={{
                   fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
                   fontSize: "20px",
-                  color: "#fff",
+                  color: "var(--text-primary)",
                   marginBottom: "12px"
                 }}
               >
@@ -153,6 +157,7 @@ export default async function CategoryPage({ params }: { params: { cat: string }
       </section>
 
       <Footer />
+      <MascotButton />
     </main>
   )
 }

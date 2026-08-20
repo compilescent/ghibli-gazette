@@ -5,6 +5,9 @@ import LandscapeFeed from "@/components/LandscapeFeed"
 import ReleaseRadar from "@/components/ReleaseRadar"
 import Footer from "@/components/Footer"
 import ImageWithFallback from "@/components/ImageWithFallback"
+import AnimatedCounter from "@/components/AnimatedCounter"
+import MascotButton from "@/components/MascotButton"
+import TodayInHistory from "@/components/TodayInHistory"
 import { getAllPosts, seedIfEmpty } from "@/lib/posts"
 import { categoryLabel, getPostCoverImage } from "@/lib/types"
 
@@ -23,13 +26,19 @@ export default async function HomePage() {
   const sideStack = posts.filter((p) => p.id !== featured?.id).slice(0, 3)
   const tickerText = posts.map((p) => p.title).join("   ✦   ")
 
+  const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0)
+  const totalReadMinutes = posts.reduce(
+    (sum, p) => sum + Math.max(1, Math.ceil(p.content.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length / 200)),
+    0
+  )
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
     name: "Ghibli Gazette",
     url: "https://ghibli-gazette.vercel.app",
     logo: "https://ghibli-gazette.vercel.app/favicon.ico",
-    description: "Premier news publication for Studio Ghibli, seasonal anime reviews, and manga coverage."
+    description: "Your anime & manga news hub: breaking anime news, manga updates, reviews, new releases, seasonal premieres, and industry intel."
   }
 
   return (
@@ -330,10 +339,43 @@ export default async function HomePage() {
       {/* Anime Release Radar with Countdown Timers */}
       <ReleaseRadar />
 
+      {/* Hub Stats Bar */}
+      <section style={{ background: "var(--bg-secondary)", borderTop: "1px solid var(--border)", borderBottom: "1px solid var(--border)", padding: "28px 0" }}>
+        <div className="shell">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "20px", textAlign: "center" }}>
+            {[
+              { value: posts.length, suffix: "", label: "Stories Published" },
+              { value: totalViews, suffix: "+", label: "Total Views" },
+              { value: totalReadMinutes, suffix: " min", label: "Of Reading Time" },
+              { value: 8, suffix: "", label: "News Categories" }
+            ].map((stat) => (
+              <div key={stat.label}>
+                <p
+                  style={{
+                    fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
+                    fontSize: "clamp(24px, 3.5vw, 34px)",
+                    fontWeight: 700,
+                    color: "var(--accent)",
+                    margin: 0
+                  }}
+                >
+                  <AnimatedCounter value={stat.value} suffix={stat.suffix} />
+                </p>
+                <p style={{ fontSize: "11.5px", letterSpacing: "0.12em", color: "var(--text-muted)", textTransform: "uppercase", margin: "4px 0 0" }}>
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Main Stories Grid + Sidebar */}
-      <BlogGrid posts={posts} />
+      <BlogGrid posts={posts} sidebarExtra={<TodayInHistory />} />
 
       <Footer />
+
+      <MascotButton />
 
       <style>{`
         @media (min-width: 860px) {

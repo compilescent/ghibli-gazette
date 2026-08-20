@@ -43,11 +43,18 @@ export default function AdminEditor() {
   const [queueFilter, setQueueFilter] = useState<QueueFilter>("pending")
   const [toast, setToast] = useState("")
   const [confirmPost, setConfirmPost] = useState<Post | null>(null)
-  const [settings, setSettings] = useState<SiteSettings>({ instagram: "", discord: "", twitter: "" })
+  const [settings, setSettings] = useState<SiteSettings>({
+    siteName: "Ghibli Gazette",
+    tagline: "Your anime & manga news hub: reviews, releases, premieres, and industry intel.",
+    instagram: "",
+    discord: "",
+    twitter: ""
+  })
   const [passwords, setPasswords] = useState({ current: "", next: "", confirm: "" })
   const [settingsMessage, setSettingsMessage] = useState("")
   const [crawling, setCrawling] = useState(false)
   const [previewStory, setPreviewStory] = useState<QueuedStory | null>(null)
+  const [postSearch, setPostSearch] = useState("")
 
   async function loadPosts() {
     try {
@@ -93,17 +100,30 @@ export default function AdminEditor() {
       published: posts.filter((post) => post.published).length,
       drafts: posts.filter((post) => !post.published).length,
       queuePending: queue.filter((item) => item.status === "pending").length,
-      categories: new Set(posts.map((post) => post.category)).size
+      categories: new Set(posts.map((post) => post.category)).size,
+      totalViews: posts.reduce((sum, post) => sum + (post.views || 0), 0)
     }),
     [posts, queue]
   )
 
   const filteredPosts = useMemo(() => {
-    if (filter === "published") return posts.filter((post) => post.published)
-    if (filter === "drafts") return posts.filter((post) => !post.published)
-    if (filter === "all") return posts
-    return posts.filter((post) => post.category === filter)
-  }, [filter, posts])
+    let base = posts
+    if (filter === "published") base = base.filter((post) => post.published)
+    if (filter === "drafts") base = base.filter((post) => !post.published)
+    if (filter !== "all" && filter !== "published" && filter !== "drafts") {
+      base = base.filter((post) => post.category === filter)
+    }
+    if (postSearch.trim()) {
+      const q = postSearch.trim().toLowerCase()
+      base = base.filter(
+        (post) =>
+          post.title.toLowerCase().includes(q) ||
+          post.excerpt.toLowerCase().includes(q) ||
+          post.tags?.some((t) => t.toLowerCase().includes(q))
+      )
+    }
+    return base
+  }, [filter, posts, postSearch])
 
   const filteredQueue = useMemo(() => {
     if (queueFilter === "all") return queue
@@ -408,7 +428,7 @@ export default function AdminEditor() {
                     ["Live Published Stories", stats.published, "#2D9966"],
                     ["Pending Review Queue", stats.queuePending, "#E8643A"],
                     ["Unpublished Drafts", stats.drafts, "#667eea"],
-                    ["Active Categories", stats.categories, "#C94FAE"]
+                    ["Total Page Views", stats.totalViews, "#C94FAE"]
                   ].map(([label, value, color]) => (
                     <div key={label as string} className="glass rounded-[8px] p-5 border border-white/10 bg-[#16161F]">
                       <p className="text-3xl font-black" style={{ color: color as string }}>
@@ -417,6 +437,30 @@ export default function AdminEditor() {
                       <p className="mt-2 text-sm font-bold text-muted">{label as string}</p>
                     </div>
                   ))}
+                </div>
+
+                {/* Most Read Stories */}
+                <div className="glass mt-6 overflow-hidden rounded-[8px] border border-white/10 bg-[#16161F]">
+                  <div className="border-b border-white/10 p-5">
+                    <h2 className="font-display text-xl italic font-bold text-white">🔥 Most Read Stories</h2>
+                  </div>
+                  <div className="divide-y divide-white/5">
+                    {[...posts]
+                      .sort((a, b) => (b.views || 0) - (a.views || 0))
+                      .slice(0, 5)
+                      .map((post, i) => (
+                        <div key={post.id} className="flex items-center gap-4 p-4">
+                          <span className="font-display text-2xl text-muted">{String(i + 1).padStart(2, "0")}</span>
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate font-bold text-white text-sm">{post.title}</p>
+                            <p className="text-xs text-muted">{categoryLabel(post.category)}</p>
+                          </div>
+                          <span className="rounded-full bg-amber/10 px-3 py-1 text-xs font-black text-amber">
+                            {post.views} views
+                          </span>
+                        </div>
+                      ))}
+                  </div>
                 </div>
 
                 {/* Quick Queue Alert */}
@@ -874,36 +918,60 @@ export default function AdminEditor() {
                   ))}
                 </div>
 
+                <input
+                  value={postSearch}
+                  onChange={(event) => setPostSearch(event.target.value)}
+                  placeholder="🔍 Search by title, excerpt, or tag..."
+                  className="mt-4 w-full max-w-md rounded-[8px] border border-white/10 bg-[#16161F] px-4 py-2.5 text-sm text-cream outline-none transition placeholder:text-muted focus:border-amber"
+                />
+
                 <div className="mt-6 grid gap-3">
-                  {filteredPosts.map((post) => (
-                    <div
-                      key={post.id}
-                      className="glass grid gap-3 rounded-[8px] p-4 md:grid-cols-[auto_1fr_auto_auto_auto_auto_auto] md:items-center border border-white/10 bg-[#16161F]"
-                    >
-                      <span className="h-3.5 w-3.5 rounded-full" style={{ background: post.coverColor || "#E8643A" }} />
-                      <p className="truncate font-bold text-white">{post.title}</p>
-                      <span
-                        className="w-fit rounded-full px-2.5 py-0.5 text-[10px] font-black text-white"
-                        style={{ background: categoryGradient(post.category) }}
+                  {filteredPosts.length === 0 ? (
+                    <p className="py-12 text-center text-sm text-muted">No stories match your filters or search.</p>
+                  ) : (
+                    filteredPosts.map((post) => (
+                      <div
+                        key={post.id}
+                        className="glass grid gap-3 rounded-[8px] p-4 md:grid-cols-[auto_1fr_auto_auto_auto_auto_auto_auto] md:items-center border border-white/10 bg-[#16161F]"
                       >
-                        {categoryLabel(post.category)}
-                      </span>
-                      <StatusBadge published={post.published} />
-                      <time className="text-xs font-bold text-muted">{post.date.slice(0, 10)}</time>
-                      <button
-                        onClick={() => editPost(post)}
-                        className="rounded-full border border-white/10 px-3 py-1 text-xs text-amber transition hover:border-amber"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => setConfirmPost(post)}
-                        className="rounded-full border border-white/10 px-3 py-1 text-xs text-[#ff7b7b] transition hover:border-[#ff7b7b]"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  ))}
+                        <span className="h-3.5 w-3.5 rounded-full" style={{ background: post.coverColor || "#E8643A" }} />
+                        <p className="truncate font-bold text-white">{post.title}</p>
+                        <span
+                          className="w-fit rounded-full px-2.5 py-0.5 text-[10px] font-black text-white"
+                          style={{ background: categoryGradient(post.category) }}
+                        >
+                          {categoryLabel(post.category)}
+                        </span>
+                        <StatusBadge published={post.published} />
+                        <time className="text-xs font-bold text-muted">{post.date.slice(0, 10)}</time>
+                        <span className="text-xs font-bold text-amber">{post.views} views</span>
+                        {post.published ? (
+                          <a
+                            href={`/blog/${post.id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="rounded-full border border-white/10 px-3 py-1 text-xs text-cream transition hover:border-amber"
+                          >
+                            View ↗
+                          </a>
+                        ) : (
+                          <span className="w-14" />
+                        )}
+                        <button
+                          onClick={() => editPost(post)}
+                          className="rounded-full border border-white/10 px-3 py-1 text-xs text-amber transition hover:border-amber"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => setConfirmPost(post)}
+                          className="rounded-full border border-white/10 px-3 py-1 text-xs text-[#ff7b7b] transition hover:border-[#ff7b7b]"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    ))
+                  )}
                 </div>
               </div>
             )}
@@ -913,14 +981,26 @@ export default function AdminEditor() {
               <form onSubmit={saveSettings} className="max-w-2xl">
                 <h1 className="font-display text-3xl md:text-4xl italic font-bold text-white">Settings</h1>
                 <div className="glass mt-8 grid gap-5 rounded-[8px] p-6 border border-white/10 bg-[#16161F]">
-                  <label className="grid gap-2">
-                    <span className="text-xs font-black text-muted uppercase tracking-wider">Site Name</span>
-                    <input
-                      value="Ghibli Gazette"
-                      disabled
-                      className="rounded-[8px] border border-white/10 bg-white/[0.02] px-4 py-3 text-muted text-sm"
-                    />
-                  </label>
+                  <div className="grid gap-5 md:grid-cols-2">
+                    <label className="grid gap-2">
+                      <span className="text-xs font-black text-muted uppercase tracking-wider">Site Name</span>
+                      <input
+                        value={settings.siteName}
+                        onChange={(event) => setSettings((current) => ({ ...current, siteName: event.target.value }))}
+                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm text-cream outline-none focus:border-amber"
+                        placeholder="Ghibli Gazette"
+                      />
+                    </label>
+                    <label className="grid gap-2">
+                      <span className="text-xs font-black text-muted uppercase tracking-wider">Tagline</span>
+                      <input
+                        value={settings.tagline}
+                        onChange={(event) => setSettings((current) => ({ ...current, tagline: event.target.value }))}
+                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm text-cream outline-none focus:border-amber"
+                        placeholder="Your anime & manga news hub..."
+                      />
+                    </label>
+                  </div>
 
                   <div className="border-t border-white/10 pt-4">
                     <p className="text-xs font-black text-muted uppercase tracking-wider mb-3">Change Password</p>

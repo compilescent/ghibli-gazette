@@ -1,11 +1,14 @@
 import { resolveAccurateCoverImage } from "./imageDatabase"
 
 export type Category =
-  | "ghibli-news"
-  | "new-release"
+  | "anime-news"
+  | "manga-news"
   | "review"
+  | "new-release"
   | "premiere"
+  | "industry"
   | "general"
+  | "ghibli-news"
 
 export interface Post {
   id: string
@@ -43,17 +46,22 @@ export interface QueuedStory {
 }
 
 export interface SiteSettings {
+  siteName: string
+  tagline: string
   instagram: string
   discord: string
   twitter: string
 }
 
 export const categories: { id: Category; label: string; from: string; to: string; color: string }[] = [
-  { id: "ghibli-news", label: "Ghibli News", from: "#667eea", to: "#764ba2", color: "#667eea" },
-  { id: "new-release", label: "New Releases", from: "#F4A261", to: "#E9C46A", color: "#E8643A" },
-  { id: "review", label: "Reviews", from: "#43b89c", to: "#2d8a7a", color: "#2D9966" },
-  { id: "premiere", label: "Premieres", from: "#f093fb", to: "#f5576c", color: "#C94FAE" },
-  { id: "general", label: "General", from: "#4facfe", to: "#00f2fe", color: "#4A90D9" }
+  { id: "anime-news", label: "Anime News", from: "#667eea", to: "#764ba2", color: "#667eea" },
+  { id: "manga-news", label: "Manga News", from: "#43b89c", to: "#2d8a7a", color: "#2D9966" },
+  { id: "review", label: "Reviews", from: "#F4A261", to: "#E9C46A", color: "#E8643A" },
+  { id: "new-release", label: "New Releases", from: "#f093fb", to: "#f5576c", color: "#C94FAE" },
+  { id: "premiere", label: "Premieres", from: "#4facfe", to: "#00f2fe", color: "#4A90D9" },
+  { id: "industry", label: "Industry Intel", from: "#9b5de5", to: "#f15bb5", color: "#9b5de5" },
+  { id: "general", label: "General", from: "#43aa8b", to: "#90be6d", color: "#43aa8b" },
+  { id: "ghibli-news", label: "Studio Ghibli", from: "#f72585", to: "#b5179e", color: "#f72585" }
 ]
 
 export function categoryLabel(category?: string | Category | null): string {
@@ -62,22 +70,34 @@ export function categoryLabel(category?: string | Category | null): string {
 
 export function categoryColor(category?: string | Category | null): string {
   const map: Record<string, string> = {
-    "ghibli-news": "#667eea",
-    "new-release": "#E8643A",
-    "review": "#2D9966",
-    "premiere": "#C94FAE",
-    "general": "#4A90D9"
+    "anime-news": "#667eea",
+    "manga-news": "#2D9966",
+    "review": "#E8643A",
+    "new-release": "#C94FAE",
+    "premiere": "#4A90D9",
+    "industry": "#9b5de5",
+    "general": "#43aa8b",
+    "ghibli-news": "#f72585"
   }
-  return (category && map[category]) || "#E8643A"
+  return (category && map[category]) || "#667eea"
 }
 
 export function categoryGradient(category: Category): string {
   const found = categories.find((item) => item.id === category)
-  return `linear-gradient(135deg, ${found?.from ?? "#4facfe"}, ${found?.to ?? "#00f2fe"})`
+  return `linear-gradient(135deg, ${found?.from ?? "#667eea"}, ${found?.to ?? "#764ba2"})`
 }
 
 export function isCategory(value: string | null | undefined): value is Category {
-  return ["ghibli-news", "new-release", "review", "premiere", "general"].includes(value ?? "")
+  return [
+    "anime-news",
+    "manga-news",
+    "review",
+    "new-release",
+    "premiere",
+    "industry",
+    "general",
+    "ghibli-news"
+  ].includes(value ?? "")
 }
 
 export function getPostCoverImage(post: { title?: string; category?: string; coverImage?: string; excerpt?: string }): string {

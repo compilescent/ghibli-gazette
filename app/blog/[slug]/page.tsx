@@ -8,6 +8,8 @@ import QuickBriefing from "@/components/QuickBriefing"
 
 import MangaPanelLightbox from "@/components/MangaPanelLightbox"
 import ImageWithFallback from "@/components/ImageWithFallback"
+import MascotButton from "@/components/MascotButton"
+import ReaderFontToggle from "@/components/ReaderFontToggle"
 import { ReadingProgress } from "@/components/ReadingProgress"
 import { TableOfContents } from "@/components/TableOfContents"
 import { getAllPosts, getPostBySlug, seedIfEmpty, updatePost } from "@/lib/posts"
@@ -27,9 +29,16 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
   await updatePost(post.id, { views: (post.views || 0) + 1 })
   const allPosts = await getAllPosts()
-  const others = allPosts.filter((p) => p.published && p.id !== post.id)
+  const publishedPosts = allPosts.filter((p) => p.published)
+  const others = publishedPosts.filter((p) => p.id !== post.id)
   const related = others.filter((p) => p.category === post.category).slice(0, 3)
   const morePosts = related.length > 0 ? related : others.slice(0, 3)
+
+  // Prev / next navigation (sorted newest → oldest)
+  const sorted = [...publishedPosts].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const currentIndex = sorted.findIndex((p) => p.id === post.id)
+  const newerPost = currentIndex > 0 ? sorted[currentIndex - 1] : null
+  const olderPost = currentIndex >= 0 && currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null
 
   const rt = readTime(post.content)
   const dateStr = new Intl.DateTimeFormat("en-US", {
@@ -151,7 +160,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
               fontSize: "clamp(28px, 4.5vw, 44px)",
               fontWeight: 700,
-              color: "#fff",
+              color: "var(--text-primary)",
               lineHeight: 1.25,
               letterSpacing: "-0.015em",
               marginBottom: "16px"
@@ -177,9 +186,12 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <span style={{ color: "var(--text-primary)", fontWeight: 500 }}>
+              <Link
+                href={`/author/${encodeURIComponent(authorName)}`}
+                style={{ color: "var(--text-primary)", fontWeight: 500, textDecoration: "none" }}
+              >
                 {authorName}
-              </span>
+              </Link>
               <span>·</span>
               <time dateTime={post.date}>Published on {dateStr}</time>
             </div>
@@ -192,6 +204,8 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   <span>{post.views} views</span>
                 </>
               )}
+              <span>·</span>
+              <ReaderFontToggle />
             </div>
           </div>
 
@@ -265,8 +279,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               }}
             >
               {post.tags.map((tag) => (
-                <span
+                <Link
                   key={tag}
+                  href={`/tag/${encodeURIComponent(tag)}`}
                   style={{
                     fontSize: "12px",
                     fontWeight: 500,
@@ -274,11 +289,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                     borderRadius: "999px",
                     background: "var(--bg-card)",
                     border: "1px solid var(--border-light)",
-                    color: "var(--text-secondary)"
+                    color: "var(--text-secondary)",
+                    textDecoration: "none",
+                    transition: "all 0.15s ease"
                   }}
                 >
                   #{tag}
-                </span>
+                </Link>
               ))}
             </div>
           )}
@@ -303,6 +320,67 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               ← Back to all stories
             </Link>
           </div>
+
+          {/* Prev / Next Navigation */}
+          <nav
+            aria-label="Article navigation"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+              gap: "12px",
+              marginTop: "24px"
+            }}
+          >
+            {newerPost ? (
+              <Link
+                href={`/blog/${newerPost.id}`}
+                style={{
+                  textDecoration: "none",
+                  padding: "16px",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-card)",
+                  transition: "all 0.2s ease"
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--accent)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
+              >
+                <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                  ← Newer story
+                </span>
+                <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", margin: "6px 0 0", lineHeight: 1.45 }} className="line-clamp-2">
+                  {newerPost.title}
+                </p>
+              </Link>
+            ) : (
+              <div />
+            )}
+            {olderPost ? (
+              <Link
+                href={`/blog/${olderPost.id}`}
+                style={{
+                  textDecoration: "none",
+                  padding: "16px",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border)",
+                  background: "var(--bg-card)",
+                  textAlign: "right",
+                  transition: "all 0.2s ease"
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--accent)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
+              >
+                <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
+                  Older story →
+                </span>
+                <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", margin: "6px 0 0", lineHeight: 1.45 }} className="line-clamp-2">
+                  {olderPost.title}
+                </p>
+              </Link>
+            ) : (
+              <div />
+            )}
+          </nav>
         </article>
 
           <TableOfContents />
@@ -345,7 +423,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                       fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
                       fontSize: "24px",
                       fontWeight: 700,
-                      color: "#fff",
+                      color: "var(--text-primary)",
                       marginTop: "4px"
                     }}
                   >
@@ -383,6 +461,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       </main>
 
       <Footer />
+      <MascotButton />
     </div>
   )
 }

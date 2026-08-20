@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { type Post, categoryLabel } from "@/lib/types"
+import { useDialog } from "@/lib/useDialog"
 
 export interface BookmarkItem {
   id: string
@@ -74,11 +75,13 @@ interface BookmarkDrawerProps {
 
 export default function BookmarkDrawer({ isOpen, onClose }: BookmarkDrawerProps) {
   const { bookmarks, removeBookmark, clearAll } = useBookmarks()
+  const dialogRef = useDialog(isOpen, onClose)
 
   if (!isOpen) return null
 
   return (
     <div
+      ref={dialogRef}
       style={{
         position: "fixed",
         inset: 0,

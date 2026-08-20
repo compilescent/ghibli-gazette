@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useState } from "react"
 import { categoryLabel, getPostCoverImage } from "@/lib/types"
 import type { Post } from "@/lib/types"
 import ImageWithFallback from "./ImageWithFallback"
@@ -21,6 +22,7 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
   const imageUrl = getPostCoverImage(post)
   const { isBookmarked, toggleBookmark } = useBookmarks()
   const saved = isBookmarked(post.id)
+  const [burst, setBurst] = useState(false)
 
   const handleBookmarkClick = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -32,6 +34,10 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
       coverImage: imageUrl,
       date: post.date
     })
+    if (!saved) {
+      setBurst(true)
+      setTimeout(() => setBurst(false), 650)
+    }
   }
 
   return (
@@ -64,6 +70,7 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
             title={saved ? "Remove from saved" : "Save for later"}
             aria-label={saved ? "Remove bookmark" : "Add bookmark"}
           >
+            {burst && <span className="sparkle-burst">✦</span>}
             {saved ? "★" : "🔖"}
           </button>
 

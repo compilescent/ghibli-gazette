@@ -210,6 +210,36 @@ export function formatAndRewriteNewsItem(item: RawNewsItem): QueuedStory {
   ) {
     category = "ghibli-news"
   } else if (
+    combined.includes("manga") ||
+    combined.includes("manhwa") ||
+    combined.includes("manhua") ||
+    combined.includes("light novel") ||
+    combined.includes("chapter") ||
+    combined.includes("volume") ||
+    combined.includes("webtoon") ||
+    combined.includes("shonen jump") ||
+    combined.includes("kodansha") ||
+    combined.includes("viz media")
+  ) {
+    category = "manga-news"
+  } else if (
+    combined.includes("studio") ||
+    combined.includes("staff") ||
+    combined.includes("animation studio") ||
+    combined.includes("industry") ||
+    combined.includes("box office") ||
+    combined.includes("earnings") ||
+    combined.includes("merger") ||
+    combined.includes("acquisition") ||
+    combined.includes("recruit") ||
+    combined.includes("producer") ||
+    combined.includes("director announces") ||
+    combined.includes("crunchyroll") ||
+    combined.includes("netflix anime") ||
+    combined.includes("streaming service")
+  ) {
+    category = "industry"
+  } else if (
     combined.includes("review") ||
     combined.includes("impressions") ||
     combined.includes("breakdown") ||
@@ -230,11 +260,21 @@ export function formatAndRewriteNewsItem(item: RawNewsItem): QueuedStory {
     combined.includes("premiere") ||
     combined.includes("debut") ||
     combined.includes("stream") ||
-    combined.includes("date") ||
+    combined.includes("airing") ||
     combined.includes("schedule") ||
-    combined.includes("broadcasting")
+    combined.includes("broadcasting") ||
+    combined.includes("season") ||
+    combined.includes("episode")
   ) {
     category = "premiere"
+  } else if (
+    combined.includes("anime") ||
+    combined.includes("anime series") ||
+    combined.includes("anime film") ||
+    combined.includes("anime movie") ||
+    combined.includes("anime adaptation")
+  ) {
+    category = "anime-news"
   }
 
   // 2. AI Rewritten Headline

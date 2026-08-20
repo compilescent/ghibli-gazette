@@ -33,6 +33,10 @@ export async function PUT(request: NextRequest) {
 
   if (body.settings) {
     await setSiteSettings({
+      siteName: body.settings.siteName ?? "Ghibli Gazette",
+      tagline:
+        body.settings.tagline ||
+        "Your anime & manga news hub: reviews, releases, premieres, and industry intel.",
       instagram: body.settings.instagram ?? "",
       discord: body.settings.discord ?? "",
       twitter: body.settings.twitter ?? ""

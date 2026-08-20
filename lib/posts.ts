@@ -123,7 +123,7 @@ function parsePosts(data: unknown): Post[] {
 
 export async function getAllPosts(): Promise<Post[]> {
   try {
-    const raw = await redis.get(POSTS_KEY)
+    const raw = await withTimeout(redis.get(POSTS_KEY), 4000)
     const posts = parsePosts(raw)
     if (posts.length > 0) {
       return sortByDateDesc(posts)
@@ -135,6 +135,41 @@ export async function getAllPosts(): Promise<Post[]> {
   }
 }
 
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`Redis operation timed out after ${ms}ms`)), ms)
+    promise.then(
+      (value) => {
+        clearTimeout(timer)
+        resolve(value)
+      },
+      (error) => {
+        clearTimeout(timer)
+        reject(error)
+      }
+    )
+  })
+}
+
+// Cache the seed state per server instance so we don't hammer Redis on every
+// ISR revalidation or runtime render.
+let seedChecked = false
+
+export async function seedIfEmpty(): Promise<void> {
+  if (seedChecked) return
+  try {
+    const raw = await withTimeout(redis.get(POSTS_KEY), 4000)
+    const posts = parsePosts(raw)
+    if (posts.length === 0) {
+      await withTimeout(redis.set(POSTS_KEY, seedPosts), 4000)
+    }
+    seedChecked = true
+  } catch (error) {
+    console.error("Error seeding posts in Redis:", error)
+    seedChecked = true
+  }
+}
+
 export async function getPostBySlug(id: string): Promise<Post | null> {
   const posts = await getAllPosts()
   return posts.find((post) => post.id === id) ?? null
@@ -142,7 +177,7 @@ export async function getPostBySlug(id: string): Promise<Post | null> {
 
 export async function createPost(post: Post): Promise<void> {
   const posts = await getAllPosts()
-  await redis.set(POSTS_KEY, sortByDateDesc([...posts, post]))
+  await withTimeout(redis.set(POSTS_KEY, sortByDateDesc([...posts, post])), 4000)
 }
 
 export async function updatePost(id: string, data: Partial<Post>): Promise<Post | null> {
@@ -155,28 +190,19 @@ export async function updatePost(id: string, data: Partial<Post>): Promise<Post 
   })
 
   if (!updated) return null
-  await redis.set(POSTS_KEY, sortByDateDesc(nextPosts))
+  await withTimeout(redis.set(POSTS_KEY, sortByDateDesc(nextPosts)), 4000)
   return updated
 }
 
 export async function deletePost(id: string): Promise<void> {
   const posts = await getAllPosts()
-  await redis.set(
-    POSTS_KEY,
-    posts.filter((post) => post.id !== id)
+  await withTimeout(
+    redis.set(
+      POSTS_KEY,
+      posts.filter((post) => post.id !== id)
+    ),
+    4000
   )
-}
-
-export async function seedIfEmpty(): Promise<void> {
-  try {
-    const raw = await redis.get(POSTS_KEY)
-    const posts = parsePosts(raw)
-    if (posts.length === 0) {
-      await redis.set(POSTS_KEY, seedPosts)
-    }
-  } catch (error) {
-    console.error("Error seeding posts in Redis:", error)
-  }
 }
 
 export function slugify(input: string): string {
@@ -208,19 +234,23 @@ export async function getAdminPassword(): Promise<string> {
 }
 
 export async function setAdminPassword(password: string): Promise<void> {
-  await redis.set(PASSWORD_KEY, password)
+  await withTimeout(redis.set(PASSWORD_KEY, password), 4000)
 }
 
 export async function getSiteSettings(): Promise<SiteSettings> {
   const defaultSettings: SiteSettings = {
+    siteName: "Ghibli Gazette",
+    tagline: "Your anime & manga news hub — reviews, releases, premieres, and industry intel.",
     instagram: "",
     discord: "",
     twitter: ""
   }
   try {
-    const settings = await redis.get<SiteSettings>(SETTINGS_KEY)
+    const settings = await withTimeout(redis.get<SiteSettings>(SETTINGS_KEY), 4000)
     if (settings && typeof settings === "object") {
       return {
+        siteName: settings.siteName || defaultSettings.siteName,
+        tagline: settings.tagline || defaultSettings.tagline,
         instagram: settings.instagram ?? "",
         discord: settings.discord ?? "",
         twitter: settings.twitter ?? ""
@@ -233,5 +263,5 @@ export async function getSiteSettings(): Promise<SiteSettings> {
 }
 
 export async function setSiteSettings(settings: SiteSettings): Promise<void> {
-  await redis.set(SETTINGS_KEY, settings)
+  await withTimeout(redis.set(SETTINGS_KEY, settings), 4000)
 }

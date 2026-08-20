@@ -61,10 +61,13 @@ const nextConfig = {
   },
   async rewrites() {
     return [
-      { source: '/news', destination: '/category/ghibli-news' },
+      { source: '/news', destination: '/category/anime-news' },
+      { source: '/manga', destination: '/category/manga-news' },
       { source: '/reviews', destination: '/category/review' },
       { source: '/releases', destination: '/category/new-release' },
       { source: '/premieres', destination: '/category/premiere' },
+      { source: '/industry', destination: '/category/industry' },
+      { source: '/ghibli', destination: '/category/ghibli-news' },
       { source: '/rss', destination: '/feed.xml' },
       { source: '/atom', destination: '/feed.xml' },
     ]

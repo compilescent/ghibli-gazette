@@ -8,8 +8,9 @@ function inferBriefing(post: Post) {
   const text = (post.title + " " + post.content + " " + (post.excerpt || "")).toLowerCase()
 
   // Studio inference
-  let studio = "Studio Ghibli"
-  if (text.includes("mappa")) studio = "MAPPA"
+  let studio = "Various Studios"
+  if (text.includes("ghibli") || text.includes("miyazaki")) studio = "Studio Ghibli"
+  else if (text.includes("mappa")) studio = "MAPPA"
   else if (text.includes("ufotable")) studio = "ufotable"
   else if (text.includes("madhouse")) studio = "Madhouse"
   else if (text.includes("wit studio")) studio = "WIT Studio"

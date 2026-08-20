@@ -9,22 +9,27 @@ import { Button, Input } from "@/components/ui"
 
 const POSTS_PER_PAGE = 6
 
-export default function BlogGrid({ posts }: { posts: Post[] }) {
+type SortMode = "newest" | "oldest" | "views"
+
+export default function BlogGrid({ posts, sidebarExtra }: { posts: Post[]; sidebarExtra?: React.ReactNode }) {
   const [active, setActive] = useState<Category | "all">("all")
   const [page, setPage] = useState(1)
+  const [sort, setSort] = useState<SortMode>("newest")
   const [email, setEmail] = useState("")
   const [subscribed, setSubscribed] = useState(false)
   const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
   const [errorMessage, setErrorMessage] = useState("")
 
-  const filtered = useMemo(
-    () => (active === "all" ? posts : posts.filter((p) => p.category === active)),
-    [active, posts]
-  )
+  const filtered = useMemo(() => {
+    const base = active === "all" ? posts : posts.filter((p) => p.category === active)
+    if (sort === "oldest") return [...base].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    if (sort === "views") return [...base].sort((a, b) => (b.views || 0) - (a.views || 0))
+    return base
+  }, [active, posts, sort])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / POSTS_PER_PAGE))
   const paginated = filtered.slice((page - 1) * POSTS_PER_PAGE, page * POSTS_PER_PAGE)
-  const trending = posts.slice(0, 5)
+  const trending = [...posts].sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 5)
   const ghibliPosts = posts.filter((p) => p.category === "ghibli-news").slice(0, 3)
 
   const catCounts = useMemo(() => {
@@ -37,6 +42,11 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
 
   function setFilter(cat: Category | "all") {
     setActive(cat)
+    setPage(1)
+  }
+
+  function handleSortChange(next: SortMode) {
+    setSort(next)
     setPage(1)
   }
 
@@ -132,7 +142,7 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
           {/* Main Column */}
           <div>
             {/* Section Header */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "24px", flexWrap: "wrap" }}>
               <h2
                 style={{
                   fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
@@ -144,7 +154,36 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
               >
                 LATEST STORIES
               </h2>
-              <div style={{ flex: 1, height: "1px", background: "var(--border)" }} />
+              <div style={{ flex: 1, height: "1px", background: "var(--border)", minWidth: "40px" }} />
+
+              {/* Sort Control */}
+              <div style={{ display: "flex", gap: "4px", background: "var(--bg-elevated)", border: "1px solid var(--border)", borderRadius: "999px", padding: "3px" }}>
+                {([
+                  ["newest", "Newest"],
+                  ["oldest", "Oldest"],
+                  ["views", "Most Read"]
+                ] as [SortMode, string][]).map(([mode, label]) => (
+                  <button
+                    key={mode}
+                    onClick={() => handleSortChange(mode)}
+                    style={{
+                      padding: "4px 12px",
+                      borderRadius: "999px",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: "11.5px",
+                      fontWeight: 700,
+                      background: sort === mode ? "var(--accent)" : "transparent",
+                      color: sort === mode ? "#fff" : "var(--text-muted)",
+                      transition: "all 0.15s ease",
+                      fontFamily: "var(--font-inter, system-ui, sans-serif)"
+                    }}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
               <span style={{ fontSize: "12px", color: "var(--text-muted)", fontFamily: "var(--font-inter, system-ui, sans-serif)" }}>
                 {filtered.length} {filtered.length === 1 ? "article" : "articles"}
               </span>
@@ -434,6 +473,9 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
               </div>
             )}
 
+            {/* Widget: Today in Anime History (server-rendered) */}
+            {sidebarExtra}
+
             {/* Widget 4: NEWSLETTER */}
             <div
               style={{
@@ -455,11 +497,13 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
                 NEWSLETTER
               </h3>
               <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "16px" }}>
-                Get top Ghibli and anime stories delivered straight to your inbox.
+                Get top anime and manga stories delivered straight to your inbox, every morning at 6 AM.
               </p>
               {subscribeStatus === "success" ? (
                 <div
                   style={{
+                    position: "relative",
+                    overflow: "hidden",
                     padding: "10px 14px",
                     background: "rgba(45, 106, 79, 0.25)",
                     border: "1px solid var(--ghibli-green)",
@@ -469,6 +513,17 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
                     fontWeight: 600
                   }}
                 >
+                  {Array.from({ length: 12 }).map((_, i) => (
+                    <span
+                      key={i}
+                      className="confetti-piece"
+                      style={{
+                        left: `${(i * 8.3) + 2}%`,
+                        background: ["#E8643A", "#F0C040", "#87CEEB", "#2D9966"][i % 4],
+                        animationDelay: `${i * 0.06}s`
+                      }}
+                    />
+                  ))}
                   ✓ Subscribed! Check your email to confirm.
                 </div>
               ) : (

@@ -6,13 +6,15 @@ import { useState, useEffect } from "react"
 import SearchModal from "./SearchModal"
 import BookmarkDrawer, { useBookmarks } from "./BookmarkDrawer"
 import { ThemeToggle } from "./ThemeToggle"
+import { useDialog } from "@/lib/useDialog"
 
 const navLinks = [
-  { href: "/category/ghibli-news", label: "News" },
+  { href: "/category/anime-news", label: "Anime" },
+  { href: "/category/manga-news", label: "Manga" },
   { href: "/category/review", label: "Reviews" },
   { href: "/category/new-release", label: "Releases" },
   { href: "/category/premiere", label: "Premieres" },
-  { href: "/category/general", label: "General" }
+  { href: "/category/industry", label: "Industry" }
 ]
 
 export default function Navbar() {
@@ -21,6 +23,7 @@ export default function Navbar() {
   const [bookmarkOpen, setBookmarkOpen] = useState(false)
   const pathname = usePathname()
   const { bookmarks } = useBookmarks()
+  const drawerRef = useDialog(menuOpen, () => setMenuOpen(false))
 
   // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
@@ -96,7 +99,7 @@ export default function Navbar() {
           {/* Desktop Nav */}
           <nav className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: "2px" }} aria-label="Main Navigation">
             {navLinks.map((link) => {
-              const active = pathname === link.href
+              const active = pathname === link.href || pathname.startsWith(link.href)
               return (
                 <Link
                   key={link.href}
@@ -275,6 +278,7 @@ export default function Navbar() {
       {/* Mobile Drawer */}
       {menuOpen && (
         <div
+          ref={drawerRef}
           style={{
             position: "fixed",
             inset: 0,
@@ -386,7 +390,7 @@ export default function Navbar() {
               <ThemeToggle />
             </div>
             {navLinks.map((link) => {
-              const active = pathname === link.href
+              const active = pathname === link.href || pathname.startsWith(link.href)
               return (
                 <Link
                   key={link.href}

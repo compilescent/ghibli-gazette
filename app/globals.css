@@ -118,12 +118,16 @@ img {
 }
 
 /* ─── CATEGORY GRADIENTS ─── */
-.cat-ghibli-news {
+.cat-anime-news {
   background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
 }
 
-.cat-review {
+.cat-manga-news {
   background: linear-gradient(135deg, #0d1b2a, #1b4332, #2d6a4f);
+}
+
+.cat-review {
+  background: linear-gradient(135deg, #2a1a0a, #6b3f0a, rgba(232, 100, 58, 0.15));
 }
 
 .cat-premiere {
@@ -131,11 +135,19 @@ img {
 }
 
 .cat-new-release {
-  background: linear-gradient(135deg, #2a1a0a, #6b3f0a, rgba(232, 100, 58, 0.15));
+  background: linear-gradient(135deg, #1a0a2e, #4a1942, rgba(201, 79, 174, 0.15));
+}
+
+.cat-industry {
+  background: linear-gradient(135deg, #1a0a2e, #3a1b69, #6a1b5a);
 }
 
 .cat-general {
-  background: linear-gradient(135deg, #0a0a1a, #1a1a3a, #2a2a5a);
+  background: linear-gradient(135deg, #0a1a1a, #1a3a2a, #2a5a4a);
+}
+
+.cat-ghibli-news {
+  background: linear-gradient(135deg, #1a0a2e, #2d1b69, #4a1942);
 }
 
 /* ─── BADGES ─── */
@@ -264,8 +276,24 @@ img {
 /* ─── PROSE ARTICLE ─── */
 .prose-article {
   color: var(--text-primary);
-  font-size: 1rem;
-  line-height: 1.8;
+  font-size: 1.05rem;
+  line-height: 1.85;
+  max-width: 72ch;
+}
+
+.reading-shell {
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+.prose-article > p:first-of-type::first-letter {
+  font-family: var(--font-baskerville, 'Libre Baskerville', Georgia, serif);
+  font-size: 3.2em;
+  font-weight: 700;
+  float: left;
+  line-height: 0.85;
+  padding-right: 0.12em;
+  color: var(--accent);
 }
 
 .prose-article h2 {
@@ -273,7 +301,9 @@ img {
   font-size: 1.75rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 2rem 0 1rem;
+  margin: 2.4rem 0 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--border);
 }
 
 .prose-article h3 {
@@ -281,7 +311,7 @@ img {
   font-size: 1.375rem;
   font-weight: 700;
   color: var(--text-primary);
-  margin: 1.5rem 0 0.75rem;
+  margin: 1.75rem 0 0.75rem;
 }
 
 .prose-article p {
@@ -291,6 +321,7 @@ img {
 .prose-article a {
   color: var(--accent);
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .prose-article a:hover {
@@ -299,12 +330,14 @@ img {
 
 .prose-article blockquote {
   border-left: 4px solid var(--accent);
-  background: var(--bg-elevated);
-  padding: 1rem 1.25rem;
-  margin: 1.5rem 0;
+  background: linear-gradient(90deg, rgba(232, 100, 58, 0.08) 0%, var(--bg-elevated) 100%);
+  padding: 1.1rem 1.4rem;
+  margin: 1.75rem 0;
   font-style: italic;
+  font-family: var(--font-baskerville, 'Libre Baskerville', Georgia, serif);
+  font-size: 1.1rem;
   color: var(--text-secondary);
-  border-radius: 0 6px 6px 0;
+  border-radius: 0 8px 8px 0;
 }
 
 .prose-article ul,
@@ -315,6 +348,7 @@ img {
 
 .prose-article li {
   margin-bottom: 0.5rem;
+  line-height: 1.7;
 }
 
 .prose-article strong {
@@ -328,6 +362,41 @@ img {
   font-family: monospace;
   color: var(--accent);
   font-size: 0.875em;
+}
+
+.prose-article img {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  margin: 1.5rem auto;
+  display: block;
+}
+
+.prose-article figure {
+  margin: 1.75rem 0;
+}
+
+.prose-article figcaption {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
+.prose-article hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2rem 0;
+}
+
+/* Reader font-size settings */
+.reader-size-s .prose-article,
+.reader-size-s .reading-shell {
+  font-size: 0.95rem;
+}
+.reader-size-l .prose-article,
+.reader-size-l .reading-shell {
+  font-size: 1.18rem;
 }
 
 /* ─── MANGA PANEL STYLING ─── */
@@ -381,7 +450,7 @@ img {
   border-radius: 0 8px 8px 0;
   font-family: var(--font-baskerville, 'Libre Baskerville', Georgia, serif);
   font-size: 1.1rem;
-  color: #fff;
+  color: var(--text-primary);
 }
 
 /* ─── UTILITIES & ANIMATIONS ─── */
@@ -446,6 +515,146 @@ img {
   0% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
+}
+
+@keyframes floatSoft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes sparkleBurst {
+  0% { transform: scale(0) rotate(0deg); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: scale(1.4) rotate(45deg); opacity: 0; }
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(140px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes spriteHop {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50% { transform: translateY(-12px); opacity: 1; }
+}
+
+@keyframes mascotWave {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(6deg); }
+}
+
+/* ─── BOOKMARK SPARKLE BURST ─── */
+.sparkle-burst {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: sparkleBurst 0.6s ease-out forwards;
+  font-size: 16px;
+}
+
+/* ─── NEWSLETTER CONFETTI ─── */
+.confetti-piece {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  top: 0;
+  animation: confettiFall 0.9s ease-in forwards;
+}
+
+/* ─── LOADING SPRITES ─── */
+.loading-sprites {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 60px 0;
+}
+.loading-sprites span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: spriteHop 1s ease-in-out infinite;
+}
+.loading-sprites span:nth-child(2) { animation-delay: 0.15s; background: var(--gold); }
+.loading-sprites span:nth-child(3) { animation-delay: 0.3s; background: var(--accent-2); }
+
+/* ─── FLOATING MASCOT ─── */
+.mascot-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 80;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 0 4px rgba(232, 100, 58, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: floatSoft 3.5s ease-in-out infinite;
+}
+.mascot-fab:hover {
+  transform: scale(1.12);
+  animation: mascotWave 0.5s ease-in-out infinite;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.6), 0 0 0 6px rgba(232, 100, 58, 0.22);
+}
+
+.mascot-fact-pop {
+  position: fixed;
+  right: 20px;
+  bottom: 84px;
+  z-index: 79;
+  max-width: 300px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.25s ease forwards;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── CALCIFER MODE (Konami easter egg) ─── */
+html.calcifer {
+  --accent: #FF5E00;
+  --accent-hover: #FF7A2F;
+  --accent-2: #FFB84D;
+  --gold: #FFD166;
+  background: linear-gradient(180deg, #1a0f0a 0%, #0A0A0F 100%);
+}
+html.calcifer body {
+  background: linear-gradient(180deg, #1a0f0a 0%, #0A0A0F 100%);
+}
+html.calcifer .mascot-fab {
+  box-shadow: 0 8px 24px rgba(255, 94, 0, 0.5), 0 0 0 4px rgba(255, 94, 0, 0.2);
+}
+
+/* ─── REDUCED MOTION ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+  .ticker-content { animation: none; }
 }
 
 .card:hover .card-image-hover {

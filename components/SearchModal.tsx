@@ -270,10 +270,11 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
             </div>
           ) : filteredPosts.length === 0 ? (
             <div style={{ padding: "40px 20px", textAlign: "center" }}>
+              <span style={{ fontSize: "34px", display: "block", marginBottom: "8px", opacity: 0.7 }}>👻</span>
               <p style={{ fontSize: "14px", color: "var(--text-primary)", fontWeight: 600, marginBottom: "4px" }}>
-                No stories found
+                No soot sprites in this corner of the forest
               </p>
-              <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+              <p style={{ fontSize: "12px", color: "var(--text-muted)", margin: 0 }}>
                 Try searching for "Jujutsu Kaisen", "Manga", "Ghibli", "Demon Slayer", or "Frieren"
               </p>
             </div>

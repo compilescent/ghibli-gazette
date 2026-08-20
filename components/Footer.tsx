@@ -1,7 +1,11 @@
 import Link from "next/link"
 import { categories } from "@/lib/types"
+import { getSiteSettings } from "@/lib/posts"
 
-export default function Footer() {
+export default async function Footer() {
+  const settings = await getSiteSettings()
+  const siteName = settings.siteName || "Ghibli Gazette"
+
   return (
     <footer
       style={{
@@ -11,6 +15,34 @@ export default function Footer() {
       }}
     >
       <div className="shell">
+        {/* Newsletter CTA Bar */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "16px",
+            padding: "20px 24px",
+            marginBottom: "40px",
+            borderRadius: "10px",
+            background: "var(--bg-card)",
+            border: "1px solid var(--border)"
+          }}
+        >
+          <div>
+            <p style={{ fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)", fontSize: "18px", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
+              📬 Never miss an anime drop
+            </p>
+            <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "4px 0 0" }}>
+              Daily morning briefing on anime, manga, and industry intel — straight to your inbox.
+            </p>
+          </div>
+          <Link href="/#latest-stories-section" className="btn btn-primary" style={{ borderRadius: "999px" }}>
+            Subscribe Now
+          </Link>
+        </div>
+
         <div
           style={{
             display: "grid",
@@ -39,7 +71,7 @@ export default function Footer() {
               </span>
             </div>
             <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.7, maxWidth: "260px" }}>
-              Your premier source for Studio Ghibli news, anime reviews, and seasonal coverage.
+              {settings.tagline || "Your anime & manga news hub: reviews, releases, premieres, and industry intel."}
             </p>
           </div>
 
@@ -58,11 +90,7 @@ export default function Footer() {
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
               {categories.map((cat) => (
-                <Link
-                  key={cat.id}
-                  href={`/category/${cat.id}`}
-                  className="footer-link"
-                >
+                <Link key={cat.id} href={`/category/${cat.id}`} className="footer-link">
                   {cat.label}
                 </Link>
               ))}
@@ -83,18 +111,30 @@ export default function Footer() {
               NAVIGATE
             </h3>
             <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <Link
-                href="/"
-                className="footer-link"
-              >
-                Home
-              </Link>
-              <Link
-                href="/admin"
-                className="footer-link"
-              >
-                Write a Story
-              </Link>
+              <Link href="/" className="footer-link">Home</Link>
+              <Link href="/archive" className="footer-link">Full Archive</Link>
+              <Link href="/rss.xml" className="footer-link">RSS Feed</Link>
+              <Link href="/admin" className="footer-link">Write a Story</Link>
+            </div>
+          </div>
+
+          {/* Company */}
+          <div>
+            <h3
+              style={{
+                fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+                fontSize: "13px",
+                letterSpacing: "0.15em",
+                color: "var(--text-muted)",
+                marginBottom: "16px"
+              }}
+            >
+              ABOUT
+            </h3>
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <Link href="/about" className="footer-link">About {siteName}</Link>
+              <Link href="/contact" className="footer-link">Contact</Link>
+              <Link href="/privacy" className="footer-link">Privacy Policy</Link>
             </div>
           </div>
         </div>
@@ -112,9 +152,9 @@ export default function Footer() {
           }}
         >
           <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
-            © {new Date().getFullYear()} Ghibli Gazette. All rights reserved.
+            © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Anime & Ghibli Editorial News</p>
+          <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Anime & Manga News Hub</p>
         </div>
       </div>
     </footer>
