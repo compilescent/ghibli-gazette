@@ -8,7 +8,7 @@ import ImageWithFallback from "@/components/ImageWithFallback"
 import { getAllPosts, seedIfEmpty } from "@/lib/posts"
 import { categoryLabel, getPostCoverImage } from "@/lib/types"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 300
 
 function readTime(content: string): number {
   const words = content.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length

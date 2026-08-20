@@ -48,7 +48,17 @@ module.exports = {
       boxShadow: {
         card: '0 2px 8px rgba(0,0,0,0.4)',
         hover: '0 8px 24px rgba(0,0,0,0.5)',
-      }
+      },
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+        'spin-slow': 'spin 3s linear infinite',
+      },
+      keyframes: {
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '.5' },
+        },
+      },
     }
   },
   plugins: []

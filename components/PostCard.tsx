@@ -5,6 +5,7 @@ import { categoryLabel, getPostCoverImage } from "@/lib/types"
 import type { Post } from "@/lib/types"
 import ImageWithFallback from "./ImageWithFallback"
 import { useBookmarks } from "./BookmarkDrawer"
+import { Card, Badge } from "@/components/ui"
 
 function readTime(content?: string): number {
   if (!content) return 2
@@ -34,86 +35,31 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
   }
 
   return (
-    <article
-      className="card"
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100%",
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: "8px",
-        overflow: "hidden",
-        transition: "all 0.2s ease",
-        position: "relative"
-      }}
-    >
-      <Link
-        href={`/blog/${post.id}`}
-        style={{ display: "flex", flexDirection: "column", flex: 1, textDecoration: "none" }}
-      >
+    <Card variant="default" hover padding="none" className="flex flex-col h-full overflow-hidden">
+      <Link href={`/blog/${post.id}`} className="block">
         {/* Top Real Image Panel (180px) */}
         <div
-          style={{
-            height: "180px",
-            position: "relative",
-            flexShrink: 0,
-            overflow: "hidden",
-            background: "var(--bg-elevated)"
-          }}
+          className="relative aspect-video overflow-hidden bg-bg-elevated"
+          style={{ flexShrink: 0 }}
         >
           <ImageWithFallback
             src={imageUrl}
             alt={post.title}
-            className="card-image-hover"
-            style={{
-              width: "100%",
-              height: "100%",
-              objectFit: "cover"
-            }}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              background: "linear-gradient(to top, rgba(10, 10, 15, 0.6) 0%, transparent 60%)"
-            }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/60 to-transparent" />
 
-          <span
-            className="badge"
-            style={{
-              position: "absolute",
-              top: "12px",
-              left: "12px",
-              zIndex: 2,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.5)"
-            }}
-          >
+          <Badge className="absolute top-3 left-3 z-10 shadow-lg" variant="default">
             {categoryLabel(post.category)}
-          </span>
+          </Badge>
 
           {/* 1-Click Bookmark Button */}
           <button
             onClick={handleBookmarkClick}
+            className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all backdrop-blur-sm border border-white/20"
             style={{
-              position: "absolute",
-              top: "10px",
-              right: "10px",
-              zIndex: 3,
-              width: "28px",
-              height: "28px",
-              borderRadius: "50%",
               background: saved ? "var(--accent)" : "rgba(10, 11, 16, 0.75)",
-              backdropFilter: "blur(4px)",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
               color: "#fff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "12px",
-              cursor: "pointer",
-              transition: "transform 0.15s ease, background 0.15s ease"
             }}
             title={saved ? "Remove from saved" : "Save for later"}
             aria-label={saved ? "Remove bookmark" : "Add bookmark"}
@@ -122,68 +68,27 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
           </button>
 
           {(featured || post.featured) && (
-            <span
-              className="badge badge-gold"
-              style={{
-                position: "absolute",
-                top: "12px",
-                right: "44px",
-                zIndex: 2,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.5)"
-              }}
-            >
+            <Badge className="absolute top-3 right-10 z-10 shadow-lg" variant="gold">
               ★ FEATURED
-            </span>
+            </Badge>
           )}
         </div>
 
         {/* Content Area */}
-        <div style={{ padding: "16px", display: "flex", flexDirection: "column", flex: 1 }}>
-          <h3
-            className="line-clamp-2 card-title-hover"
-            style={{
-              fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
-              fontSize: "16px",
-              fontWeight: 700,
-              color: "var(--text-primary)",
-              lineHeight: 1.4,
-              marginBottom: "8px",
-              transition: "color 0.2s ease"
-            }}
-          >
+        <div className="p-4 flex flex-col flex-1">
+          <h3 className="font-display text-base font-bold text-text-primary line-clamp-2 group-hover:text-accent transition-colors mb-2">
             {post.title}
           </h3>
 
           {post.excerpt && (
-            <p
-              className="line-clamp-3"
-              style={{
-                fontFamily: "var(--font-inter, system-ui, sans-serif)",
-                fontSize: "13px",
-                color: "var(--text-secondary)",
-                lineHeight: 1.6,
-                marginBottom: "14px"
-              }}
-            >
+            <p className="font-inter text-sm text-text-secondary line-clamp-3 mb-4 leading-relaxed">
               {post.excerpt}
             </p>
           )}
 
           {/* Footer Metadata */}
-          <div
-            style={{
-              marginTop: "auto",
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              fontSize: "12px",
-              color: "var(--text-muted)",
-              paddingTop: "12px",
-              borderTop: "1px solid var(--border)",
-              fontFamily: "var(--font-inter, system-ui, sans-serif)"
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+          <div className="mt-auto flex justify-between items-center text-xs text-text-muted pt-3 border-t border-border font-inter">
+            <div className="flex items-center gap-2">
               <span>{dateStr}</span>
               {post.views !== undefined && post.views > 0 && (
                 <>
@@ -196,6 +101,6 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
           </div>
         </div>
       </Link>
-    </article>
+    </Card>
   )
 }

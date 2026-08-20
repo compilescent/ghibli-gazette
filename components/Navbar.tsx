@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import SearchModal from "./SearchModal"
 import BookmarkDrawer, { useBookmarks } from "./BookmarkDrawer"
+import { ThemeToggle } from "./ThemeToggle"
 
 const navLinks = [
   { href: "/category/ghibli-news", label: "News" },
@@ -222,6 +223,9 @@ export default function Navbar() {
               📡
             </a>
 
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Write Button */}
             <Link
               href="/admin"
@@ -377,6 +381,10 @@ export default function Navbar() {
             >
               Home
             </Link>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 14px", marginTop: "8px" }}>
+              <span style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Theme</span>
+              <ThemeToggle />
+            </div>
             {navLinks.map((link) => {
               const active = pathname === link.href
               return (

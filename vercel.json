@@ -1,5 +1,22 @@
 {
   "functions": {
-    "app/api/**": { "maxDuration": 10 }
-  }
+    "app/api/**": { "maxDuration": 30 },
+    "app/og/**": { "maxDuration": 10 }
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "origin-when-cross-origin" }
+      ]
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/queue/crawl",
+      "schedule": "0 */6 * * *"
+    }
+  ]
 }

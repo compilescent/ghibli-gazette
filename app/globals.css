@@ -620,3 +620,72 @@ img {
     display: none !important;
   }
 }
+
+/* ─── LIGHT MODE ─── */
+html.light {
+  --bg-primary: #F8F7F3;
+  --bg-secondary: #EEEDE6;
+  --bg-card: #FFFFFF;
+  --bg-elevated: #F5F3ED;
+  --border: #E0DDD4;
+  --border-light: #D4D1C8;
+  --text-primary: #1A1A1F;
+  --text-secondary: #5A5868;
+  --text-muted: #8A8898;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+html.light body::-webkit-scrollbar-thumb {
+  background: var(--accent);
+}
+
+html.light body::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+html.light .prose-article {
+  color: var(--text-primary);
+}
+
+html.light .prose-article h2,
+html.light .prose-article h3 {
+  color: var(--text-primary);
+}
+
+html.light .prose-article a {
+  color: var(--accent);
+}
+
+html.light .prose-article a:hover {
+  color: var(--accent-hover);
+}
+
+html.light .prose-article blockquote {
+  background: var(--bg-elevated);
+  border-left-color: var(--accent);
+  color: var(--text-secondary);
+}
+
+html.light .prose-article code {
+  background: var(--bg-elevated);
+  color: var(--accent);
+}
+
+html.light .prose-article strong {
+  color: #B85000;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not(.light) {
+    --bg-primary: #F8F7F3;
+    --bg-secondary: #EEEDE6;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #F5F3ED;
+    --border: #E0DDD4;
+    --border-light: #D4D1C8;
+    --text-primary: #1A1A1F;
+    --text-secondary: #5A5868;
+    --text-muted: #8A8898;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}

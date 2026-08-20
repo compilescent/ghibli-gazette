@@ -8,10 +8,12 @@ import QuickBriefing from "@/components/QuickBriefing"
 import AudioReader from "@/components/AudioReader"
 import MangaPanelLightbox from "@/components/MangaPanelLightbox"
 import ImageWithFallback from "@/components/ImageWithFallback"
+import { ReadingProgress } from "@/components/ReadingProgress"
+import { TableOfContents } from "@/components/TableOfContents"
 import { getAllPosts, getPostBySlug, seedIfEmpty, updatePost } from "@/lib/posts"
 import { categoryLabel, getPostCoverImage } from "@/lib/types"
 
-export const dynamic = "force-dynamic"
+export const revalidate = 3600
 
 function readTime(content: string): number {
   const words = content.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length
@@ -38,6 +40,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   const authorName = post.author?.trim() || "Ghibli Gazette Editorial"
   const imageUrl = getPostCoverImage(post)
   const siteUrl = "https://ghibli-gazette.vercel.app"
+  const ogImageUrl = `${siteUrl}/og/${post.id}`
 
   // JSON-LD NewsArticle & Breadcrumbs
   const jsonLdArticle = {
@@ -45,7 +48,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
     "@type": "NewsArticle",
     headline: post.title,
     description: post.excerpt || post.title,
-    image: imageUrl ? [imageUrl] : [],
+    image: imageUrl ? [imageUrl, ogImageUrl] : [ogImageUrl],
     datePublished: new Date(post.date).toISOString(),
     dateModified: new Date(post.date).toISOString(),
     author: [
@@ -104,12 +107,19 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumbs) }}
       />
+      <meta property="og:image" content={ogImageUrl} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:image" content={ogImageUrl} />
 
+      <ReadingProgress />
       <Navbar />
 
       {/* Main Editorial Article Container */}
       <main id="main-content" style={{ flex: 1, padding: "40px 0 80px" }}>
-        <article className="reading-shell">
+        <div className="shell" style={{ display: "grid", gap: "60px", gridTemplateColumns: "1fr" }}>
+          <article className="reading-shell">
           {/* Breadcrumb Navigation */}
           <nav
             style={{
@@ -295,6 +305,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             </Link>
           </div>
         </article>
+
+          <TableOfContents />
+        </div>
 
         {/* More Stories To Read */}
         {morePosts.length > 0 && (

@@ -5,6 +5,7 @@ import Link from "next/link"
 import PostCard from "./PostCard"
 import { categories, categoryLabel, type Category } from "@/lib/types"
 import type { Post } from "@/lib/types"
+import { Button, Input } from "@/components/ui"
 
 const POSTS_PER_PAGE = 6
 
@@ -13,6 +14,8 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
   const [page, setPage] = useState(1)
   const [email, setEmail] = useState("")
   const [subscribed, setSubscribed] = useState(false)
+  const [subscribeStatus, setSubscribeStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
+  const [errorMessage, setErrorMessage] = useState("")
 
   const filtered = useMemo(
     () => (active === "all" ? posts : posts.filter((p) => p.category === active)),
@@ -37,12 +40,34 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
     setPage(1)
   }
 
-  function handleSubscribe(e: React.FormEvent) {
+  async function handleSubscribe(e: React.FormEvent) {
     e.preventDefault()
-    if (!email) return
-    setSubscribed(true)
-    setEmail("")
-    setTimeout(() => setSubscribed(false), 4000)
+    if (!email || subscribeStatus === "loading") return
+
+    setSubscribeStatus("loading")
+    setErrorMessage("")
+
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to subscribe")
+      }
+
+      setSubscribeStatus("success")
+      setEmail("")
+      setTimeout(() => setSubscribeStatus("idle"), 5000)
+    } catch (error) {
+      setSubscribeStatus("error")
+      setErrorMessage(error instanceof Error ? error.message : "Something went wrong")
+      setTimeout(() => setSubscribeStatus("idle"), 5000)
+    }
   }
 
   return (
@@ -432,7 +457,7 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
               <p style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.5, marginBottom: "16px" }}>
                 Get top Ghibli and anime stories delivered straight to your inbox.
               </p>
-              {subscribed ? (
+              {subscribeStatus === "success" ? (
                 <div
                   style={{
                     padding: "10px 14px",
@@ -444,22 +469,25 @@ export default function BlogGrid({ posts }: { posts: Post[] }) {
                     fontWeight: 600
                   }}
                 >
-                  ✓ Subscribed! Welcome aboard.
+                  ✓ Subscribed! Check your email to confirm.
                 </div>
               ) : (
                 <form onSubmit={handleSubscribe} style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <input
+                  <Input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="you@example.com"
                     required
-                    className="input"
+                    disabled={subscribeStatus === "loading"}
                     style={{ fontSize: "13px" }}
                   />
-                  <button type="submit" className="btn btn-primary" style={{ width: "100%", justifyContent: "center" }}>
-                    Subscribe
-                  </button>
+                  {errorMessage && (
+                    <p style={{ color: "#F07550", fontSize: "12px", margin: 0 }}>{errorMessage}</p>
+                  )}
+                  <Button type="submit" variant="primary" fullWidth disabled={subscribeStatus === "loading"} loading={subscribeStatus === "loading"}>
+                    {subscribeStatus === "loading" ? "Subscribing..." : "Subscribe"}
+                  </Button>
                 </form>
               )}
             </div>
