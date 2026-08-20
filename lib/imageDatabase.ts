@@ -2,8 +2,8 @@ import { type Category } from "./types"
 
 /**
  * Curated Official Anime & Manga Key Visual Database
- * Real, high-resolution studio key visuals / posters from MyAnimeList CDN,
- * AniList banners, and Wikimedia Commons.
+ * Real key visuals / posters sourced live from MyAnimeList and AniList CDNs.
+ * Every URL was verified to return HTTP 200 at generation time.
  *
  * Matching is score-based: keywords appearing in the article TITLE weigh more
  * than excerpt matches, and longer (more specific) keywords break ties.
@@ -17,15 +17,14 @@ export interface FranchiseImageRule {
 }
 
 export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
-  // ═══════════ STUDIO GHIBLI ═══════════
   {
     keywords: ["boy and the heron", "heron", "kimitachi", "mahito", "grief"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/10/121260.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1126/139654.jpg",
     franchise: "The Boy and the Heron"
   },
   {
     keywords: ["my neighbor totoro", "totoro", "satsuki", "mei", "catbus"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/4/75913.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1110/147278.jpg",
     franchise: "My Neighbor Totoro"
   },
   {
@@ -35,87 +34,85 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["princess mononoke", "mononoke", "ashitaka", "iron town", "forest spirit"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/2/14914.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1355/147277.jpg",
     franchise: "Princess Mononoke"
   },
   {
     keywords: ["howl", "howl's moving castle", "moving castle", "sophie", "calcifer"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/6/3009.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1470/138723.jpg",
     franchise: "Howl's Moving Castle"
   },
   {
     keywords: ["kiki", "kiki's delivery service", "jiji", "delivery service"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1/27929.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1186/156082.jpg",
     franchise: "Kiki's Delivery Service"
   },
   {
     keywords: ["ponyo", "sosuke", "fujimoto"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/5/26151.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1331/138727.jpg",
     franchise: "Ponyo"
   },
   {
     keywords: ["castle in the sky", "laputa", "pazu", "sheeta"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/10/37767.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/5/37799.jpg",
     franchise: "Castle in the Sky"
   },
   {
     keywords: ["nausicaa", "nausicaä", "valley of the wind"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/3/12898.jpg",
-    franchise: "Nausicaä of the Valley of the Wind"
+    imageUrl: "https://cdn.myanimelist.net/images/anime/10/75914.jpg",
+    franchise: "Nausicaa of the Valley of the Wind"
   },
   {
     keywords: ["porco rosso", "porco"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/9/86984.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1915/134262.jpg",
     franchise: "Porco Rosso"
   },
   {
     keywords: ["grave of the fireflies", "hotaru no haka", "setsuko", "seita"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/4/47735.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1485/141208.jpg",
     franchise: "Grave of the Fireflies"
   },
   {
     keywords: ["the wind rises", "jirou", "wind rises"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/3/54561.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/8/52353.jpg",
     franchise: "The Wind Rises"
   },
   {
     keywords: ["arrietty", "borrowers"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/4/38547.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1974/116417.jpg",
     franchise: "Arrietty"
   },
   {
     keywords: ["when marnie was there", "marnie"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/10/73651.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1460/141897.jpg",
     franchise: "When Marnie Was There"
   },
   {
     keywords: ["whisper of the heart", "seiji", "shizuku"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/7/49189.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1764/138714.jpg",
     franchise: "Whisper of the Heart"
   },
   {
     keywords: ["only yesterday", "taeko"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/7/40121.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/13/56383.jpg",
     franchise: "Only Yesterday"
   },
   {
     keywords: ["from up on poppy hill", "poppy hill", "kokuriko"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/3/31723.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/8/32547.jpg",
     franchise: "From Up on Poppy Hill"
   },
   {
     keywords: ["earwig and the witch"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1377/111157.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1242/110170.jpg",
     franchise: "Earwig and the Witch"
   },
   {
     keywords: ["ghibli park", "ghibli museum", "aichi", "mitaka", "toshio suzuki", "goro miyazaki", "hayao miyazaki", "miyazaki"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/3/12898.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/6/79597.jpg",
     franchise: "Studio Ghibli",
     weight: 1
   },
-
-  // ═══════════ BIG SHONEN / SHONEN JUMP ═══════════
   {
     keywords: ["demon slayer", "kimetsu", "infinity castle", "tanjiro", "nezuko", "mugen train", "hashira", "ufotable"],
     imageUrl: "https://cdn.myanimelist.net/images/anime/1286/99889.jpg",
@@ -123,7 +120,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["one piece", "luffy", "zoro", "egghead", "the one piece", "eiichiro oda", "gear 5", "straw hat", "wano"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/6/73245.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1244/138851.jpg",
     franchise: "One Piece"
   },
   {
@@ -133,12 +130,12 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["naruto", "boruto", "uzumaki", "sasuke", "kakashi", "shippuden"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/13/17405.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1141/142503.jpg",
     franchise: "Naruto"
   },
   {
     keywords: ["dragon ball", "dragonball", "goku", "vegeta", "daima", "akira toriyama", "super saiyan", "toei"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1254/135863.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1723/145231.jpg",
     franchise: "Dragon Ball"
   },
   {
@@ -153,7 +150,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["fullmetal alchemist", "brotherhood", "edward elric", "alchemy", "homunculus"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1223/96541.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1208/94745.jpg",
     franchise: "Fullmetal Alchemist: Brotherhood"
   },
   {
@@ -168,7 +165,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["black clover", "asta", "yuno", "clover kingdom"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/9/90035.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/2/88336.jpg",
     franchise: "Black Clover"
   },
   {
@@ -183,11 +180,14 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["fairy tail", "natsu", "lucy", "erza", "gray"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/4/64735.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/5/18179.jpg",
     franchise: "Fairy Tail"
   },
-
-  // ═══════════ MAJOR 2023-2026 HITS ═══════════
+  {
+    keywords: ["gintama", "gintoki", "shinpachi", "kagura", "odyssey"],
+    imageUrl: "https://cdn.myanimelist.net/images/anime/10/73274.jpg",
+    franchise: "Gintama"
+  },
   {
     keywords: ["frieren", "beyond journey's end", "fern", "stark", "himmel", "madhouse", "aussicht"],
     imageUrl: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg",
@@ -200,17 +200,17 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["solo leveling", "sung jinwoo", "arise", "shadow monarch", "chugong", "hunter", "gate"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1598/128450.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1801/142390.jpg",
     franchise: "Solo Leveling"
   },
   {
     keywords: ["dandadan", "dan da dan", "momo", "okarun", "turbo granny", "science saru", "yukinobu tatsu"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1727/137229.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1795/144366.jpg",
     franchise: "DanDaDan"
   },
   {
     keywords: ["oshi no ko", "aqua", "ruby", "idol", "kana", "ako", "ai hoshino"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1670/133402.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1812/134736.jpg",
     franchise: "Oshi no Ko"
   },
   {
@@ -220,37 +220,37 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["apothecary diaries", "apothecary", "kusuriya", "maomao", "jinshi"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1708/138033.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1392/155859.jpg",
     franchise: "The Apothecary Diaries"
   },
   {
     keywords: ["delicious in dungeon", "dungeon meshi", "laios", "marcille", "senshi", "chilchuck", "monster chef"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1404/134331.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1711/142478.jpg",
     franchise: "Delicious in Dungeon"
   },
   {
     keywords: ["kaiju no 8", "kaiju", "hoshina", "kafka", "defense force"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1310/134193.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1015/138006.jpg",
     franchise: "Kaiju No. 8"
   },
   {
     keywords: ["wind breaker", "wind breaker"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1092/137087.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1438/141816.jpg",
     franchise: "Wind Breaker"
   },
   {
     keywords: ["jellyfish can't swim", "jellyfish"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1054/138478.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1834/141827.jpg",
     franchise: "Jellyfish Can't Swim in the Night"
   },
   {
     keywords: ["blue lock", "bluelock", "yoichi", "isagi", "egoist"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1675/133770.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1843/131042.jpg",
     franchise: "Blue Lock"
   },
   {
     keywords: ["cyberpunk", "edgerunners", "david martinez", "lucy"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1818/126435.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1154/131039.jpg",
     franchise: "Cyberpunk: Edgerunners"
   },
   {
@@ -259,8 +259,8 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
     franchise: "Mob Psycho 100"
   },
   {
-    keywords: ["ranking of kings", "bosaje", "bojji", "kage", "prince", "oujou no osama"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1346/119505.jpg",
+    keywords: ["ranking of kings", "bosaje", "bojji", "kage", "prince"],
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1347/117616.jpg",
     franchise: "Ranking of Kings"
   },
   {
@@ -270,17 +270,17 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["lycoris recoil", "chisato", "takina", "lycoris"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1439/123274.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1261/127311.jpg",
     franchise: "Lycoris Recoil"
   },
   {
     keywords: ["komi can't communicate", "komi", "tadano", "hitohito"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1464/111943.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1179/119897.jpg",
     franchise: "Komi Can't Communicate"
   },
   {
     keywords: ["horimiya", "hori", "miyamura", "izumi"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1517/125628.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1695/111486.jpg",
     franchise: "Horimiya"
   },
   {
@@ -290,7 +290,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["your lie in april", "kousei", "kaori", "shigatsu"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/3/67177.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1405/143284.jpg",
     franchise: "Your Lie in April"
   },
   {
@@ -299,15 +299,8 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
     franchise: "Violet Evergarden"
   },
   {
-    keywords: ["frieren", "sousou no frieren"],
-    imageUrl: "https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg",
-    franchise: "Frieren: Beyond Journey's End"
-  },
-
-  // ═══════════ CLASSIC & CULT FAVORITES ═══════════
-  {
     keywords: ["death note", "light yagami", "l lawliet", "kira", "ryuk", "note"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/9/9453.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1079/138100.jpg",
     franchise: "Death Note"
   },
   {
@@ -322,57 +315,52 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["steins gate", "steins;gate", "okabe", "kurisu", "mad scientist", "worldline"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/5/73199.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1935/127974.jpg",
     franchise: "Steins;Gate"
   },
   {
     keywords: ["code geass", "lelouch", "c.c", "geass", "suzaku", "zero"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/5/50331.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1032/135088.jpg",
     franchise: "Code Geass"
   },
   {
     keywords: ["ghost in the shell", "motoko", "kusanagi", "section 9", "masamune"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/10/26902.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/10/82594.jpg",
     franchise: "Ghost in the Shell"
   },
   {
     keywords: ["akira", "kaneda", "tetsuo", "neo tokyo", "otomo"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/6/46855.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1408/114012.jpg",
     franchise: "Akira"
   },
   {
-    keywords: ["gintama", "gintoki", "shinpachi", "kagura", "odyssey"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/3/72078.jpg",
-    franchise: "Gintama"
-  },
-  {
     keywords: ["berserk", "guts", "griffith", "casca", "kentaro miura", "brand of sacrifice"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1/36617.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1384/119988.jpg",
     franchise: "Berserk"
   },
   {
     keywords: ["no game no life", "sora", "shiro", "blank", "disboard"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/5/65157.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1074/111944.jpg",
     franchise: "No Game No Life"
   },
   {
     keywords: ["re zero", "rezero", "re:zero", "subaru", "emilia", "rem", "ram", "witch"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/11/79410.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1522/128039.jpg",
     franchise: "Re:Zero"
   },
   {
     keywords: ["konosuba", "kazuma", "aqua", "megumin", "darkness", "explosion"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/8/18866.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1895/142748.jpg",
     franchise: "KonoSuba"
   },
   {
     keywords: ["mushoku tensei", "rudeus", "eris", "roxy", "sylphiette", "jobless reincarnation"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1530/135042.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1480/92990.jpg",
     franchise: "Mushoku Tensei"
   },
   {
     keywords: ["made in abyss", "riko", "reg", "nanachi", "abyss", "netherworld"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1111/107132.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/6/86733.jpg",
     franchise: "Made in Abyss"
   },
   {
@@ -382,7 +370,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["tokyo ghoul", "kaneki", "ghoul", "cage", "flesh"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1/17183.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1498/134443.jpg",
     franchise: "Tokyo Ghoul"
   },
   {
@@ -392,7 +380,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["fire force", "shinra", "tamaki", "company 8", "enner"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/11/89430.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1664/103275.jpg",
     franchise: "Fire Force"
   },
   {
@@ -402,7 +390,7 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["that time i got reincarnated as a slime", "slime", "rimuru", "tempest", "tensei"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/5/87325.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1069/123309.jpg",
     franchise: "That Time I Got Reincarnated as a Slime"
   },
   {
@@ -417,21 +405,14 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["kuroko", "kuroko's basketball", "kagami", "generation of miracles"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/2/78257.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/11/50453.jpg",
     franchise: "Kuroko's Basketball"
   },
   {
     keywords: ["ace of diamond", "daiya no ace", "sawamura", "eijun"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/11/75274.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1464/111943.jpg",
     franchise: "Ace of Diamond"
   },
-  {
-    keywords: ["super cub", "reiko", "motorcycle"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1950/110753.jpg",
-    franchise: "Super Cub"
-  },
-
-  // ═══════════ MAKOTO SHINKAI & FILM PHENOMENA ═══════════
   {
     keywords: ["your name", "kimi no na wa", "taki", "mitsuha", "mitsuha miyamizu", "red string"],
     imageUrl: "https://cdn.myanimelist.net/images/anime/5/87048.jpg",
@@ -439,27 +420,27 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["weathering with you", "hodaka", "hina", "tenki no ko"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1414/108315.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1880/101146.jpg",
     franchise: "Weathering with You"
   },
   {
     keywords: ["suzume", "suzume no tojimari", "souta", "daijin", "makoto shinkai"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1414/121273.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1216/127966.jpg",
     franchise: "Suzume"
   },
   {
     keywords: ["5 centimeters per second", "five centimeters", "takaki", "akari"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/6/35952.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1410/112994.jpg",
     franchise: "5 Centimeters per Second"
   },
   {
     keywords: ["garden of words", "takao", "yukino", "rain"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/5/58625.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1597/112995.jpg",
     franchise: "The Garden of Words"
   },
   {
     keywords: ["makoto shinkai", "shinkai"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1414/121273.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1216/127966.jpg",
     franchise: "Makoto Shinkai",
     weight: 1
   },
@@ -470,39 +451,37 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["wolf children", "hana", "ookami kodomo"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/13/29466.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/9/35721.jpg",
     franchise: "Wolf Children"
   },
   {
     keywords: ["summer wars", "kenji", "oz", "natsuki"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/11/27547.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1593/116751.jpg",
     franchise: "Summer Wars"
   },
   {
     keywords: ["the girl who leapt through time", "girl who leapt", "makoto konno", "toki wo kakeru"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1/20517.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1/2432.jpg",
     franchise: "The Girl Who Leapt Through Time"
   },
   {
     keywords: ["paprika", "satoshi kon", "dream machine", "paprika"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/7/18679.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1929/93629.jpg",
     franchise: "Paprika"
   },
   {
     keywords: ["perfect blue", "mima", "mima kirigoe", "satoshi kon"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/4/18471.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1254/134212.jpg",
     franchise: "Perfect Blue"
   },
   {
     keywords: ["belle", "ryu", "suzu", "inside out", "world"],
-    imageUrl: "https://cdn.myanimelist.net/images/anime/1011/118143.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/anime/1519/115315.jpg",
     franchise: "Belle"
   },
-
-  // ═══════════ MANGA / PRINT FOCUS ═══════════
   {
     keywords: ["jujutsu kaisen manga", "jjk manga"],
-    imageUrl: "https://cdn.myanimelist.net/images/manga/3/219190.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/manga/3/210341.jpg",
     franchise: "Jujutsu Kaisen (manga)"
   },
   {
@@ -512,27 +491,27 @@ export const OFFICIAL_ANIME_DATABASE: FranchiseImageRule[] = [
   },
   {
     keywords: ["chainsaw man manga", "chainsaw man chapter", "csm manga"],
-    imageUrl: "https://cdn.myanimelist.net/images/manga/3/216953.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/manga/3/216464.jpg",
     franchise: "Chainsaw Man (manga)"
   },
   {
     keywords: ["attack on titan manga", "shingeki manga"],
-    imageUrl: "https://cdn.myanimelist.net/images/manga/2/153239.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/manga/2/37846.jpg",
     franchise: "Attack on Titan (manga)"
   },
   {
     keywords: ["demon slayer manga", "kimetsu manga"],
-    imageUrl: "https://cdn.myanimelist.net/images/manga/1/179023.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/manga/2/201572.jpg",
     franchise: "Demon Slayer (manga)"
   },
   {
     keywords: ["berserk manga", "miura manga"],
-    imageUrl: "https://cdn.myanimelist.net/images/manga/2/209189.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/manga/1/157897.jpg",
     franchise: "Berserk (manga)"
   },
   {
     keywords: ["frieren manga"],
-    imageUrl: "https://cdn.myanimelist.net/images/manga/3/237486.jpg",
+    imageUrl: "https://cdn.myanimelist.net/images/manga/3/232121.jpg",
     franchise: "Frieren (manga)"
   }
 ]
@@ -546,15 +525,15 @@ export const THEMATIC_IMAGE_POOL: string[] = [
   "https://cdn.myanimelist.net/images/anime/1171/109222.jpg",
   "https://cdn.myanimelist.net/images/anime/1806/126216.jpg",
   "https://s4.anilist.co/file/anilistcdn/media/anime/banner/154587-ivXNJ23SM1xB.jpg",
-  "https://cdn.myanimelist.net/images/anime/1598/128450.jpg",
+  "https://cdn.myanimelist.net/images/anime/1801/142390.jpg",
   "https://cdn.myanimelist.net/images/anime/10/47347.jpg",
   "https://cdn.myanimelist.net/images/anime/1337/99013.jpg",
   "https://cdn.myanimelist.net/images/anime/1441/122795.jpg",
-  "https://cdn.myanimelist.net/images/anime/1414/121273.jpg",
+  "https://cdn.myanimelist.net/images/anime/1216/127966.jpg",
   "https://cdn.myanimelist.net/images/anime/5/87048.jpg",
   "https://cdn.myanimelist.net/images/anime/6/79597.jpg",
-  "https://cdn.myanimelist.net/images/anime/4/75913.jpg",
-  "https://cdn.myanimelist.net/images/anime/1223/96541.jpg",
+  "https://cdn.myanimelist.net/images/anime/1110/147278.jpg",
+  "https://cdn.myanimelist.net/images/anime/1208/94745.jpg",
   "https://cdn.myanimelist.net/images/anime/4/19644.jpg"
 ]
 
@@ -621,17 +600,33 @@ export function upgradeSourceImageUrl(url: string): string {
  * Keywords found in the title weigh more than excerpt matches, and longer
  * (more specific) keywords win ties so broad terms like "anime" never hijack.
  */
+const KEYWORD_CACHE = new Map<string, RegExp>()
+
+/**
+ * Builds a word-boundary regex for a keyword so short terms like "rem" never
+ * match inside other words (e.g. "premieres") or "dio" inside "studio".
+ */
+function keywordRegex(keyword: string): RegExp {
+  let re = KEYWORD_CACHE.get(keyword)
+  if (!re) {
+    const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+    re = new RegExp(`\\b${escaped}\\b`, "i")
+    KEYWORD_CACHE.set(keyword, re)
+  }
+  return re
+}
+
 function matchFranchise(query: string, title: string): FranchiseImageRule | null {
-  const titleLower = title.toLowerCase()
   let best: FranchiseImageRule | null = null
   let bestScore = 0
 
   for (const rule of OFFICIAL_ANIME_DATABASE) {
     let score = 0
     for (const keyword of rule.keywords) {
-      if (query.includes(keyword)) {
+      const re = keywordRegex(keyword)
+      if (re.test(query)) {
         // Title matches are worth 3x excerpt matches
-        score += titleLower.includes(keyword) ? 3 : 1
+        score += re.test(title) ? 3 : 1
       }
     }
     if (score === 0) continue
