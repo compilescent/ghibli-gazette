@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import SearchModal from "./SearchModal"
 
 const navLinks = [
   { href: "/category/ghibli-news", label: "News" },
@@ -14,7 +15,20 @@ const navLinks = [
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
   const pathname = usePathname()
+
+  // Global Ctrl+K / Cmd+K listener
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault()
+        setSearchOpen((prev) => !prev)
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   return (
     <>
@@ -83,8 +97,46 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right section */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          {/* Right section: Search + Write + Mobile Hamburger */}
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            {/* Quick Search Button */}
+            <button
+              onClick={() => setSearchOpen(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border-light)",
+                borderRadius: "999px",
+                padding: "5px 12px",
+                color: "var(--text-secondary)",
+                fontSize: "12px",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              className="search-btn-hover"
+              title="Search stories (Ctrl+K)"
+            >
+              <span>🔍</span>
+              <span className="hide-mobile">Search</span>
+              <span
+                className="hide-mobile"
+                style={{
+                  fontSize: "10px",
+                  padding: "1px 5px",
+                  background: "var(--bg-primary)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "4px",
+                  color: "var(--text-muted)",
+                  fontFamily: "monospace"
+                }}
+              >
+                ⌘K
+              </span>
+            </button>
+
+            {/* Write Button */}
             <Link
               href="/admin"
               className="btn btn-primary hide-mobile"
@@ -122,6 +174,9 @@ export default function Navbar() {
           </div>
         </div>
       </header>
+
+      {/* Instant Search Modal */}
+      <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
 
       {/* Mobile Drawer */}
       {menuOpen && (
@@ -162,6 +217,33 @@ export default function Navbar() {
                 ✕
               </button>
             </div>
+
+            {/* Mobile search trigger */}
+            <button
+              onClick={() => {
+                setMenuOpen(false)
+                setSearchOpen(true)
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "10px 14px",
+                fontSize: "14px",
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                borderRadius: "6px",
+                background: "var(--bg-card)",
+                border: "1px solid var(--border)",
+                marginBottom: "8px",
+                cursor: "pointer",
+                textAlign: "left"
+              }}
+            >
+              <span>🔍</span>
+              <span>Search Stories...</span>
+            </button>
+
             <Link
               href="/"
               onClick={() => setMenuOpen(false)}
