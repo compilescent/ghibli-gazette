@@ -30,7 +30,7 @@ export const Container = forwardRef<HTMLDivElement, ContainerProps>(
 
 Container.displayName = "Container"
 
-export interface SectionProps extends HTMLAttributes<HTMLSectionElement> {
+export interface SectionProps extends HTMLAttributes<HTMLElement> {
   variant?: "default" | "muted" | "bordered"
   padding?: "none" | "sm" | "md" | "lg" | "xl"
 }
