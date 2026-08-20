@@ -1,6 +1,10 @@
+"use client"
+
 import Link from "next/link"
 import { categoryLabel, getPostCoverImage } from "@/lib/types"
 import type { Post } from "@/lib/types"
+import ImageWithFallback from "./ImageWithFallback"
+import { useBookmarks } from "./BookmarkDrawer"
 
 function readTime(content?: string): number {
   if (!content) return 2
@@ -14,6 +18,20 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
     new Date(post.date)
   )
   const imageUrl = getPostCoverImage(post)
+  const { isBookmarked, toggleBookmark } = useBookmarks()
+  const saved = isBookmarked(post.id)
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    toggleBookmark({
+      id: post.id,
+      title: post.title,
+      category: post.category,
+      coverImage: imageUrl,
+      date: post.date
+    })
+  }
 
   return (
     <article
@@ -26,7 +44,8 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
         border: "1px solid var(--border)",
         borderRadius: "8px",
         overflow: "hidden",
-        transition: "all 0.2s ease"
+        transition: "all 0.2s ease",
+        position: "relative"
       }}
     >
       <Link
@@ -43,17 +62,15 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
             background: "var(--bg-elevated)"
           }}
         >
-          <img
+          <ImageWithFallback
             src={imageUrl}
             alt={post.title}
-            loading="lazy"
+            className="card-image-hover"
             style={{
               width: "100%",
               height: "100%",
-              objectFit: "cover",
-              transition: "transform 0.4s ease"
+              objectFit: "cover"
             }}
-            className="card-image-hover"
           />
           <div
             style={{
@@ -75,13 +92,42 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
           >
             {categoryLabel(post.category)}
           </span>
+
+          {/* 1-Click Bookmark Button */}
+          <button
+            onClick={handleBookmarkClick}
+            style={{
+              position: "absolute",
+              top: "10px",
+              right: "10px",
+              zIndex: 3,
+              width: "28px",
+              height: "28px",
+              borderRadius: "50%",
+              background: saved ? "var(--accent)" : "rgba(10, 11, 16, 0.75)",
+              backdropFilter: "blur(4px)",
+              border: "1px solid rgba(255, 255, 255, 0.2)",
+              color: "#fff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "12px",
+              cursor: "pointer",
+              transition: "transform 0.15s ease, background 0.15s ease"
+            }}
+            title={saved ? "Remove from saved" : "Save for later"}
+            aria-label={saved ? "Remove bookmark" : "Add bookmark"}
+          >
+            {saved ? "★" : "🔖"}
+          </button>
+
           {(featured || post.featured) && (
             <span
               className="badge badge-gold"
               style={{
                 position: "absolute",
                 top: "12px",
-                right: "12px",
+                right: "44px",
                 zIndex: 2,
                 boxShadow: "0 2px 8px rgba(0,0,0,0.5)"
               }}
@@ -116,14 +162,14 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
                 fontSize: "13px",
                 color: "var(--text-secondary)",
                 lineHeight: 1.6,
-                marginBottom: "12px"
+                marginBottom: "14px"
               }}
             >
               {post.excerpt}
             </p>
           )}
 
-          {/* Bottom Meta Row */}
+          {/* Footer Metadata */}
           <div
             style={{
               marginTop: "auto",
@@ -132,17 +178,21 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
               alignItems: "center",
               fontSize: "12px",
               color: "var(--text-muted)",
-              fontFamily: "var(--font-inter, system-ui, sans-serif)",
               paddingTop: "12px",
-              borderTop: "1px solid var(--border)"
+              borderTop: "1px solid var(--border)",
+              fontFamily: "var(--font-inter, system-ui, sans-serif)"
             }}
           >
-            <span style={{ color: "var(--accent)", fontWeight: 600 }}>
-              {post.author?.trim() || "Ghibli Gazette Staff"}
-            </span>
-            <span>
-              {dateStr} · {rt} min read
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+              <span>{dateStr}</span>
+              {post.views !== undefined && post.views > 0 && (
+                <>
+                  <span>·</span>
+                  <span>{post.views} views</span>
+                </>
+              )}
+            </div>
+            <span>{rt} min read</span>
           </div>
         </div>
       </Link>

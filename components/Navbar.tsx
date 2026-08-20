@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
 import SearchModal from "./SearchModal"
+import BookmarkDrawer, { useBookmarks } from "./BookmarkDrawer"
 
 const navLinks = [
   { href: "/category/ghibli-news", label: "News" },
@@ -16,7 +17,9 @@ const navLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [bookmarkOpen, setBookmarkOpen] = useState(false)
   const pathname = usePathname()
+  const { bookmarks } = useBookmarks()
 
   // Global Ctrl+K / Cmd+K listener
   useEffect(() => {
@@ -32,13 +35,34 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Skip to Content Accessibility Link */}
+      <a
+        href="#main-content"
+        style={{
+          position: "absolute",
+          top: "-100px",
+          left: "16px",
+          padding: "8px 16px",
+          background: "var(--accent)",
+          color: "#fff",
+          fontWeight: 700,
+          borderRadius: "4px",
+          zIndex: 1000,
+          transition: "top 0.2s ease"
+        }}
+        onFocus={(e) => (e.currentTarget.style.top = "16px")}
+        onBlur={(e) => (e.currentTarget.style.top = "-100px")}
+      >
+        Skip to main content
+      </a>
+
       <header
         style={{
           position: "sticky",
           top: 0,
           zIndex: 50,
           height: "60px",
-          background: "rgba(10, 10, 15, 0.95)",
+          background: "rgba(10, 11, 16, 0.95)",
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
           borderBottom: "1px solid var(--border)",
@@ -63,13 +87,13 @@ export default function Navbar() {
                 display: "inline-block"
               }}
             />
-            <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "28px", color: "#F0EEE8", lineHeight: 1, letterSpacing: "0.03em" }}>
+            <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "28px", color: "#F4F2EC", lineHeight: 1, letterSpacing: "0.03em" }}>
               GAZETTE
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+          <nav className="hide-mobile" style={{ display: "flex", alignItems: "center", gap: "2px" }} aria-label="Main Navigation">
             {navLinks.map((link) => {
               const active = pathname === link.href
               return (
@@ -97,7 +121,7 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right section: Search + Write + Mobile Hamburger */}
+          {/* Right section: Search + Bookmarks + Write + Mobile Hamburger */}
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             {/* Quick Search Button */}
             <button
@@ -117,6 +141,7 @@ export default function Navbar() {
               }}
               className="search-btn-hover"
               title="Search stories (Ctrl+K)"
+              aria-label="Search stories"
             >
               <span>🔍</span>
               <span className="hide-mobile">Search</span>
@@ -135,6 +160,67 @@ export default function Navbar() {
                 ⌘K
               </span>
             </button>
+
+            {/* Saved Bookmarks Button */}
+            <button
+              onClick={() => setBookmarkOpen(true)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border-light)",
+                borderRadius: "999px",
+                padding: "5px 12px",
+                color: bookmarks.length > 0 ? "var(--accent)" : "var(--text-secondary)",
+                fontSize: "12px",
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              title="Saved Stories"
+              aria-label={`Saved Stories (${bookmarks.length})`}
+            >
+              <span>🔖</span>
+              {bookmarks.length > 0 && (
+                <span
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    padding: "1px 5px",
+                    borderRadius: "999px",
+                    background: "var(--accent)",
+                    color: "#fff"
+                  }}
+                >
+                  {bookmarks.length}
+                </span>
+              )}
+            </button>
+
+            {/* RSS Feed Icon */}
+            <a
+              href="/feed.xml"
+              target="_blank"
+              rel="noreferrer"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "28px",
+                height: "28px",
+                borderRadius: "50%",
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border)",
+                color: "var(--text-muted)",
+                fontSize: "12px",
+                textDecoration: "none"
+              }}
+              className="hide-mobile"
+              title="RSS Feed"
+              aria-label="RSS Feed"
+            >
+              📡
+            </a>
 
             {/* Write Button */}
             <Link
@@ -166,6 +252,7 @@ export default function Navbar() {
                 gap: "5px"
               }}
               aria-label="Toggle Navigation Menu"
+              aria-expanded={menuOpen}
             >
               <span style={{ display: "block", width: "22px", height: "2px", background: "var(--text-primary)", borderRadius: "1px" }} />
               <span style={{ display: "block", width: "22px", height: "2px", background: "var(--text-primary)", borderRadius: "1px" }} />
@@ -177,6 +264,9 @@ export default function Navbar() {
 
       {/* Instant Search Modal */}
       <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+
+      {/* Saved Bookmarks Drawer */}
+      <BookmarkDrawer isOpen={bookmarkOpen} onClose={() => setBookmarkOpen(false)} />
 
       {/* Mobile Drawer */}
       {menuOpen && (
@@ -205,6 +295,7 @@ export default function Navbar() {
               gap: "6px"
             }}
             onClick={(e) => e.stopPropagation()}
+            aria-label="Mobile Navigation"
           >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px", paddingBottom: "12px", borderBottom: "1px solid var(--border)" }}>
               <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "20px", color: "var(--accent)" }}>
@@ -213,6 +304,7 @@ export default function Navbar() {
               <button
                 onClick={() => setMenuOpen(false)}
                 style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: "20px", cursor: "pointer" }}
+                aria-label="Close menu"
               >
                 ✕
               </button>
@@ -242,6 +334,32 @@ export default function Navbar() {
             >
               <span>🔍</span>
               <span>Search Stories...</span>
+            </button>
+
+            {/* Mobile bookmarks trigger */}
+            <button
+              onClick={() => {
+                setMenuOpen(false)
+                setBookmarkOpen(true)
+              }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "10px 14px",
+                fontSize: "14px",
+                fontWeight: 600,
+                color: "var(--text-primary)",
+                borderRadius: "6px",
+                background: "var(--bg-card)",
+                border: "1px solid var(--border)",
+                marginBottom: "12px",
+                cursor: "pointer",
+                textAlign: "left"
+              }}
+            >
+              <span>🔖</span>
+              <span>Saved Stories ({bookmarks.length})</span>
             </button>
 
             <Link

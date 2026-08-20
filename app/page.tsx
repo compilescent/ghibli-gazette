@@ -1,9 +1,12 @@
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import BlogGrid from "@/components/BlogGrid"
+import LandscapeFeed from "@/components/LandscapeFeed"
+import ReleaseRadar from "@/components/ReleaseRadar"
 import Footer from "@/components/Footer"
+import ImageWithFallback from "@/components/ImageWithFallback"
 import { getAllPosts, seedIfEmpty } from "@/lib/posts"
-import { categoryLabel, getPostCoverImage, type Post } from "@/lib/types"
+import { categoryLabel, getPostCoverImage } from "@/lib/types"
 
 export const dynamic = "force-dynamic"
 
@@ -20,8 +23,24 @@ export default async function HomePage() {
   const sideStack = posts.filter((p) => p.id !== featured?.id).slice(0, 3)
   const tickerText = posts.map((p) => p.title).join("   ✦   ")
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    name: "Ghibli Gazette",
+    url: "https://ghibli-gazette.vercel.app",
+    logo: "https://ghibli-gazette.vercel.app/favicon.ico",
+    description: "Premier news publication for Studio Ghibli, seasonal anime reviews, and manga coverage."
+  }
+
   return (
-    <main style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-primary)" }}>
+    <main
+      id="main-content"
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-primary)" }}
+    >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
 
       {/* Breaking News Ticker */}
@@ -37,6 +56,7 @@ export default async function HomePage() {
             overflow: "hidden",
             boxShadow: "0 2px 8px rgba(0, 0, 0, 0.2)"
           }}
+          aria-label="Breaking News Ticker"
         >
           <div
             style={{
@@ -95,6 +115,7 @@ export default async function HomePage() {
             borderBottom: "1px solid var(--border)",
             padding: "32px 0 40px"
           }}
+          aria-label="Featured Story"
         >
           <div className="shell">
             <div
@@ -112,36 +133,35 @@ export default async function HomePage() {
                 <article className="hero-featured-card">
                   <div
                     style={{
-                      height: "390px",
+                      height: "400px",
                       position: "relative",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "flex-end",
                       padding: "28px",
                       overflow: "hidden",
-                      background: "var(--bg-elevated)"
+                      background: "var(--bg-elevated)",
+                      borderRadius: "10px"
                     }}
                   >
-                    <img
+                    <ImageWithFallback
                       src={getPostCoverImage(featured)}
                       alt={featured.title}
-                      loading="lazy"
+                      className="card-image-hover"
                       style={{
                         position: "absolute",
                         inset: 0,
                         width: "100%",
                         height: "100%",
-                        objectFit: "cover",
-                        transition: "transform 0.4s ease"
+                        objectFit: "cover"
                       }}
-                      className="card-image-hover"
                     />
                     <div
                       style={{
                         position: "absolute",
                         inset: 0,
                         background:
-                          "linear-gradient(to top, rgba(10, 10, 15, 0.95) 0%, rgba(10, 10, 15, 0.55) 50%, rgba(10, 10, 15, 0.15) 100%)"
+                          "linear-gradient(to top, rgba(10, 11, 16, 0.95) 0%, rgba(10, 11, 16, 0.5) 50%, rgba(10, 11, 16, 0.1) 100%)"
                       }}
                     />
 
@@ -160,7 +180,7 @@ export default async function HomePage() {
                         className="card-title-hover"
                         style={{
                           fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
-                          fontSize: "clamp(22px, 3vw, 34px)",
+                          fontSize: "clamp(22px, 3.2vw, 34px)",
                           fontWeight: 700,
                           color: "#fff",
                           lineHeight: 1.25,
@@ -235,26 +255,24 @@ export default async function HomePage() {
                       <article className="hero-side-card">
                         <div
                           style={{
-                            width: "84px",
-                            height: "84px",
-                            borderRadius: "6px",
+                            width: "88px",
+                            height: "88px",
+                            borderRadius: "8px",
                             flexShrink: 0,
                             overflow: "hidden",
                             background: "var(--bg-elevated)",
                             position: "relative"
                           }}
                         >
-                          <img
+                          <ImageWithFallback
                             src={getPostCoverImage(post)}
                             alt={post.title}
-                            loading="lazy"
+                            className="card-image-hover"
                             style={{
                               width: "100%",
                               height: "100%",
-                              objectFit: "cover",
-                              transition: "transform 0.3s ease"
+                              objectFit: "cover"
                             }}
-                            className="card-image-hover"
                           />
                         </div>
                         <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
@@ -305,6 +323,12 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* Horizontal Landscape Spotlight Carousel */}
+      <LandscapeFeed posts={posts} />
+
+      {/* Anime Release Radar with Countdown Timers */}
+      <ReleaseRadar />
 
       {/* Main Stories Grid + Sidebar */}
       <BlogGrid posts={posts} />
