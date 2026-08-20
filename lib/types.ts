@@ -21,6 +21,25 @@ export interface Post {
   views: number
 }
 
+export interface QueuedStory {
+  id: string
+  title: string
+  originalTitle: string
+  excerpt: string
+  content: string
+  category: Category
+  coverImage: string
+  coverColor: string
+  sourceName: string
+  sourceUrl: string
+  sourceDate: string
+  confidenceScore: number
+  status: "pending" | "approved" | "dismissed"
+  tags: string[]
+  createdAt: string
+  aiGenerated: boolean
+}
+
 export interface SiteSettings {
   instagram: string
   discord: string
@@ -78,8 +97,11 @@ export function getPostCoverImage(post: { title?: string; category?: string; cov
   if (title.includes("miyazaki") || title.includes("ghibli") || title.includes("spirited") || title.includes("howl")) {
     return "https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200&auto=format&fit=crop"
   }
-  if (title.includes("premiere") || title.includes("august") || title.includes("season") || title.includes("demon slayer") || title.includes("frieren")) {
+  if (title.includes("premiere") || title.includes("august") || title.includes("season") || title.includes("demon slayer") || title.includes("frieren") || title.includes("chainsaw")) {
     return "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1200&auto=format&fit=crop"
+  }
+  if (title.includes("one piece") || title.includes("jujutsu") || title.includes("dragon ball") || title.includes("bleach")) {
+    return "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1200&auto=format&fit=crop"
   }
 
   switch (post.category) {
