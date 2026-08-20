@@ -237,31 +237,42 @@ export async function setAdminPassword(password: string): Promise<void> {
   await withTimeout(redis.set(PASSWORD_KEY, password), 4000)
 }
 
+const defaultSettings: SiteSettings = {
+  siteName: "Ghibli Gazette",
+  tagline: "Your anime & manga news hub — reviews, releases, premieres, and industry intel.",
+  instagram: "",
+  discord: "",
+  twitter: ""
+}
+
+// Cache settings in memory for 60s to avoid a Redis round-trip on every page render.
+let settingsCache: { value: SiteSettings; at: number } | null = null
+
 export async function getSiteSettings(): Promise<SiteSettings> {
-  const defaultSettings: SiteSettings = {
-    siteName: "Ghibli Gazette",
-    tagline: "Your anime & manga news hub — reviews, releases, premieres, and industry intel.",
-    instagram: "",
-    discord: "",
-    twitter: ""
+  if (settingsCache && Date.now() - settingsCache.at < 60_000) {
+    return settingsCache.value
   }
   try {
-    const settings = await withTimeout(redis.get<SiteSettings>(SETTINGS_KEY), 4000)
+    const settings = await withTimeout(redis.get<SiteSettings>(SETTINGS_KEY), 3000)
     if (settings && typeof settings === "object") {
-      return {
+      const value: SiteSettings = {
         siteName: settings.siteName || defaultSettings.siteName,
         tagline: settings.tagline || defaultSettings.tagline,
         instagram: settings.instagram ?? "",
         discord: settings.discord ?? "",
         twitter: settings.twitter ?? ""
       }
+      settingsCache = { value, at: Date.now() }
+      return value
     }
   } catch (error) {
     console.error("Error fetching site settings:", error)
   }
+  settingsCache = { value: defaultSettings, at: Date.now() }
   return defaultSettings
 }
 
 export async function setSiteSettings(settings: SiteSettings): Promise<void> {
+  settingsCache = null
   await withTimeout(redis.set(SETTINGS_KEY, settings), 4000)
 }

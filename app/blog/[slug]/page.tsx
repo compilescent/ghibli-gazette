@@ -334,6 +334,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             {newerPost ? (
               <Link
                 href={`/blog/${newerPost.id}`}
+                className="prev-next-card"
                 style={{
                   textDecoration: "none",
                   padding: "16px",
@@ -342,8 +343,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   background: "var(--bg-card)",
                   transition: "all 0.2s ease"
                 }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--accent)")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
               >
                 <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
                   ← Newer story
@@ -358,6 +357,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             {olderPost ? (
               <Link
                 href={`/blog/${olderPost.id}`}
+                className="prev-next-card"
                 style={{
                   textDecoration: "none",
                   padding: "16px",
@@ -367,8 +367,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   textAlign: "right",
                   transition: "all 0.2s ease"
                 }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--accent)")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
               >
                 <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text-muted)" }}>
                   Older story →
@@ -462,6 +460,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
       <Footer />
       <MascotButton />
+      <style>{`
+        .prev-next-card:hover { border-color: var(--accent) !important; }
+      `}</style>
     </div>
   )
 }

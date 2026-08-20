@@ -78,9 +78,8 @@ export default async function ArchivePage() {
                   return (
                     <tr
                       key={post.id}
-                      style={{ borderBottom: "1px solid var(--border)", transition: "background 0.15s ease" }}
-                      onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--bg-elevated)")}
-                      onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
+                      style={{ borderBottom: "1px solid var(--border)" }}
+                      className="archive-row"
                     >
                       <td style={{ padding: "14px 18px" }}>
                         <Link
@@ -114,6 +113,10 @@ export default async function ArchivePage() {
           </div>
         )}
       </div>
+      <style>{`
+        .archive-row { transition: background 0.15s ease; }
+        .archive-row:hover { background: var(--bg-elevated); }
+      `}</style>
       <Footer />
       <MascotButton />
     </main>
