@@ -590,6 +590,25 @@ img {
   opacity: 0.88;
 }
 
+/* ─── SAAS APP UI & CARD ENHANCEMENTS ─── */
+.radar-card {
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.radar-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(232, 100, 58, 0.4) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(232, 100, 58, 0.15) !important;
+}
+
+.landscape-card-hover {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.landscape-card-hover:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--accent) !important;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), 0 0 24px rgba(232, 100, 58, 0.2) !important;
+}
+
 @media (max-width: 768px) {
   .hide-mobile {
     display: none !important;
