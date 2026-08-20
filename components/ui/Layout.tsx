@@ -35,7 +35,7 @@ export interface SectionProps extends HTMLAttributes<HTMLElement> {
   padding?: "none" | "sm" | "md" | "lg" | "xl"
 }
 
-export const Section = forwardRef<HTMLSectionElement, SectionProps>(
+export const Section = forwardRef<HTMLElement, SectionProps>(
   ({ variant = "default", padding = "lg", className = "", children, ...props }, ref) => {
     const variants = {
       default: "bg-bg-primary",
