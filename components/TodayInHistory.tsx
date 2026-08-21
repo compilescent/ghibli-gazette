@@ -1,9 +1,3 @@
-import { categories, type Post } from "@/lib/types"
-import Link from "next/link"
-
-/**
- * Curated "Today in Anime History" facts, rotated deterministically by day-of-year.
- */
 const HISTORY_FACTS: { month: number; day: number; text: string }[] = [
   { month: 1, day: 5, text: "In 1988, Hayao Miyazaki's 'My Neighbor Totoro' premiered in Japanese theaters — and quietly changed animation forever." },
   { month: 1, day: 27, text: "In 1917, Japan's first surviving anime short film debuted, kicking off over a century of animation history." },
@@ -30,29 +24,42 @@ export default function TodayInHistory() {
   return (
     <aside
       style={{
-        background: "var(--bg-card)",
-        border: "1px solid var(--border)",
-        borderRadius: "10px",
-        padding: "20px",
-        boxShadow: "var(--shadow)"
+        background: "linear-gradient(135deg, #1a1535, #2d1b69)",
+        border: "1px solid #667eea44",
+        borderRadius: "6px",
+        padding: "16px"
       }}
       aria-label="Today in Anime History"
     >
       <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-        <span style={{ fontSize: "18px" }}>📜</span>
+        <span style={{ fontSize: "16px" }}>📜</span>
         <span
           style={{
             fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-            fontSize: "14px",
-            letterSpacing: "0.15em",
-            color: "var(--accent)",
+            fontSize: "13px",
+            letterSpacing: "0.12em",
+            color: "#fff",
             textTransform: "uppercase"
           }}
         >
-          Today in Anime History · {dateStr}
+          TODAY IN ANIME HISTORY
+        </span>
+        <span
+          style={{
+            marginLeft: "auto",
+            fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+            fontSize: "11px",
+            letterSpacing: "0.08em",
+            background: "#667eea",
+            color: "#fff",
+            padding: "2px 8px",
+            borderRadius: "3px"
+          }}
+        >
+          {dateStr}
         </span>
       </div>
-      <p style={{ fontSize: "13.5px", lineHeight: 1.7, color: "var(--text-secondary)", margin: 0 }}>
+      <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", lineHeight: 1.6, color: "rgba(255,255,255,0.85)", margin: 0 }}>
         {fact.text}
       </p>
     </aside>

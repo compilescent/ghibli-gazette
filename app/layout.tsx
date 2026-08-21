@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { Bebas_Neue, Inter, Libre_Baskerville } from "next/font/google"
+import { Bebas_Neue, Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import ScrollProgress from "@/components/ScrollProgress"
 import KonamiMode from "@/components/KonamiMode"
@@ -17,11 +17,11 @@ const inter = Inter({
   display: "swap"
 })
 
-const baskerville = Libre_Baskerville({
-  weight: ["400", "700"],
+const playfair = Playfair_Display({
+  weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-baskerville",
+  variable: "--font-playfair",
   display: "swap"
 })
 
@@ -60,7 +60,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bebas.variable} ${inter.variable} ${baskerville.variable}`}>
+    <html lang="en" className={`${bebas.variable} ${inter.variable} ${playfair.variable}`}>
       <body>
         <ScrollProgress />
         <KonamiMode />

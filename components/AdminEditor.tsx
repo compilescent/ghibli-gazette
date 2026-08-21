@@ -22,15 +22,13 @@ const emptyPost: Partial<Post> = {
   excerpt: "",
   content: "<p>Begin your story here...</p>",
   category: "general",
-  coverColor: "#E8643A",
+  coverColor: "#E8392A",
   coverImage: "",
   author: "Ghibli Gazette Staff",
   published: false,
   featured: false,
   tags: []
 }
-
-const swatches = ["#667eea", "#E8643A", "#2D9966", "#C94FAE", "#4A90D9"]
 
 export default function AdminEditor() {
   const [tab, setTab] = useState<Tab>("dashboard")
@@ -53,7 +51,6 @@ export default function AdminEditor() {
   const [passwords, setPasswords] = useState({ current: "", next: "", confirm: "" })
   const [settingsMessage, setSettingsMessage] = useState("")
   const [crawling, setCrawling] = useState(false)
-  const [previewStory, setPreviewStory] = useState<QueuedStory | null>(null)
   const [postSearch, setPostSearch] = useState("")
 
   async function loadPosts() {
@@ -263,7 +260,7 @@ export default function AdminEditor() {
       excerpt: story.excerpt,
       content: story.content,
       category: story.category,
-      coverColor: story.coverColor || "#E8643A",
+      coverColor: story.coverColor || "#E8392A",
       coverImage: story.coverImage,
       author: "Ghibli Gazette Staff",
       published: true,
@@ -348,114 +345,151 @@ export default function AdminEditor() {
 
   return (
     <PasswordGate>
-      <main className="min-h-screen bg-[radial-gradient(circle_at_80%_10%,rgba(232,100,58,0.12),transparent_28rem),#0A0A0F] text-cream">
+      <main style={{ minHeight: "100vh", display: "flex", background: "var(--bg)", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)" }}>
         {toast && (
-          <div className="toast fixed left-1/2 top-5 z-[100] rounded-full border border-amber/40 bg-[#16161F]/95 px-6 py-3 text-sm font-black text-amber shadow-2xl backdrop-blur">
+          <div style={{ position: "fixed", left: "50%", top: "20px", transform: "translateX(-50%)", zIndex: 100, background: "var(--card)", border: "1px solid var(--red)", color: "var(--text)", padding: "10px 20px", borderRadius: "6px", fontSize: "13px", fontWeight: 600, boxShadow: "0 8px 24px rgba(0,0,0,0.5)" }}>
             {toast}
           </div>
         )}
 
-        <div className="grid min-h-screen md:grid-cols-[240px_1fr]">
+        <div style={{ display: "flex", minHeight: "100vh", width: "100%" }}>
           {/* Sidebar Navigation */}
-          <aside className="border-b border-white/10 bg-[#111118]/90 p-4 backdrop-blur md:border-b-0 md:border-r md:p-6 flex flex-col justify-between">
+          <aside style={{ width: "220px", background: "var(--bg2)", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", justifyContent: "space-between", flexShrink: 0 }}>
             <div>
-              <div className="flex items-center justify-between gap-3 md:block">
-                <div className="flex items-center gap-2">
-                  <span className="font-display text-2xl font-bold tracking-wider text-amber">GHIBLI</span>
-                  <span className="font-display text-2xl font-bold tracking-wider text-white">GAZETTE</span>
+              <div style={{ padding: "20px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+                  <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "22px", color: "var(--red)", letterSpacing: "0.03em" }}>GHIBLI</span>
+                  <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "22px", color: "var(--text)", letterSpacing: "0.03em" }}>GAZETTE</span>
                 </div>
-                <button
-                  onClick={logout}
-                  className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold text-muted transition hover:border-amber hover:text-amber md:hidden"
-                >
-                  Logout
-                </button>
+                <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "10px", letterSpacing: "0.15em", color: "var(--text3)", textTransform: "uppercase", marginTop: "4px" }}>Staff Panel</p>
               </div>
 
-              <nav className="mt-8 flex gap-2 overflow-x-auto md:grid md:gap-2">
+              <nav style={{ display: "flex", flexDirection: "column", gap: "2px", padding: "0 0 20px" }}>
                 {[
-                  ["dashboard", "📊 Dashboard", 0],
+                  ["dashboard", "📊 Dashboard", stats.total],
                   ["queue", "📥 News Queue", stats.queuePending],
                   ["new", "✦ Editor Desk", 0],
                   ["posts", "📝 All Posts", stats.total],
                   ["settings", "⚙️ Settings", 0]
-                ].map(([id, label, count]) => (
-                  <button
-                    key={id as string}
-                    onClick={() => setTab(id as Tab)}
-                    className={`flex items-center justify-between shrink-0 rounded-[8px] border-l-4 px-4 py-3 text-left text-sm font-bold transition ${
-                      tab === id
-                        ? "border-amber bg-white/[0.08] text-amber"
-                        : "border-transparent text-muted hover:bg-white/[0.04] hover:text-cream"
-                    }`}
-                  >
-                    <span>{label as string}</span>
-                    {Number(count) > 0 && (
-                      <span className="rounded-full bg-amber px-2 py-0.5 text-xs font-black text-black">
-                        {count as number}
-                      </span>
-                    )}
-                  </button>
-                ))}
+                ].map(([id, label, count]) => {
+                  const isActive = tab === id
+                  return (
+                    <button
+                      key={id as string}
+                      onClick={() => setTab(id as Tab)}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        padding: "10px 20px",
+                        fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                        fontSize: "13px",
+                        fontWeight: 500,
+                        textAlign: "left",
+                        cursor: "pointer",
+                        border: "none",
+                        borderLeft: isActive ? "3px solid var(--red)" : "3px solid transparent",
+                        background: isActive ? "#1a0f0f" : "transparent",
+                        color: isActive ? "var(--red)" : "var(--text2)",
+                        transition: "all 0.15s ease"
+                      }}
+                      onMouseEnter={(e) => { if (!isActive) { e.currentTarget.style.background = "var(--bg3)"; e.currentTarget.style.color = "var(--text)" } }}
+                      onMouseLeave={(e) => { if (!isActive) { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "var(--text2)" } }}
+                    >
+                      <span>{label as string}</span>
+                      {Number(count) > 0 && (
+                        <span style={{ background: "var(--red)", color: "#fff", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", padding: "1px 6px", borderRadius: "999px" }}>
+                          {count as number}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
               </nav>
             </div>
 
-            <div className="mt-8 hidden md:block">
-              <button onClick={logout} className="btn btn-outline w-full text-xs">
+            <div style={{ padding: "20px", borderTop: "1px solid var(--border)" }}>
+              <button
+                onClick={logout}
+                style={{
+                  width: "100%",
+                  padding: "10px",
+                  fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                  fontSize: "13px",
+                  color: "var(--red)",
+                  background: "transparent",
+                  border: "1px solid var(--border)",
+                  borderRadius: "6px",
+                  cursor: "pointer",
+                  transition: "all 0.15s ease"
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.background = "var(--card)"; e.currentTarget.style.borderColor = "var(--red)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "var(--border)" }}
+              >
                 Log Out
               </button>
             </div>
           </aside>
 
           {/* Main Content Area */}
-          <section className="p-4 pb-28 md:p-8 overflow-y-auto">
+          <section style={{ flex: 1, background: "var(--bg)", padding: "24px", overflowY: "auto" }}>
             {/* ─── 1. DASHBOARD TAB ─── */}
             {tab === "dashboard" && (
               <div>
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <h1 className="font-display text-3xl md:text-4xl italic font-bold text-white">Editorial Dashboard</h1>
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "24px" }}>
+                  <h1 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "32px", letterSpacing: "0.06em", color: "var(--text)" }}>EDITORIAL DASHBOARD</h1>
                   <button
                     onClick={handleCrawlNews}
                     disabled={crawling}
-                    className="btn btn-primary text-sm flex items-center gap-2"
+                    style={{
+                      background: "var(--red)",
+                      color: "#fff",
+                      fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      cursor: crawling ? "not-allowed" : "pointer",
+                      opacity: crawling ? 0.6 : 1
+                    }}
                   >
-                    <span>{crawling ? "📡 Scanning..." : "🔄 Crawl & Fetch News"}</span>
+                    {crawling ? "📡 Scanning..." : "🔄 Crawl & Fetch News"}
                   </button>
                 </div>
 
-                <div className="mt-8 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "16px", marginBottom: "24px" }}>
                   {[
-                    ["Live Published Stories", stats.published, "#2D9966"],
-                    ["Pending Review Queue", stats.queuePending, "#E8643A"],
-                    ["Unpublished Drafts", stats.drafts, "#667eea"],
-                    ["Total Page Views", stats.totalViews, "#C94FAE"]
-                  ].map(([label, value, color]) => (
-                    <div key={label as string} className="glass rounded-[8px] p-5 border border-white/10 bg-[#16161F]">
-                      <p className="text-3xl font-black" style={{ color: color as string }}>
-                        {value as number}
-                      </p>
-                      <p className="mt-2 text-sm font-bold text-muted">{label as string}</p>
+                    ["Live Published Stories", stats.published],
+                    ["Pending Review Queue", stats.queuePending],
+                    ["Unpublished Drafts", stats.drafts],
+                    ["Total Page Views", stats.totalViews]
+                  ].map(([label, value]) => (
+                    <div key={label as string} style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "20px" }}>
+                      <p style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "36px", color: "var(--red)", lineHeight: 1 }}>{value as number}</p>
+                      <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: "var(--text3)", marginTop: "8px" }}>{label as string}</p>
                     </div>
                   ))}
                 </div>
 
                 {/* Most Read Stories */}
-                <div className="glass mt-6 overflow-hidden rounded-[8px] border border-white/10 bg-[#16161F]">
-                  <div className="border-b border-white/10 p-5">
-                    <h2 className="font-display text-xl italic font-bold text-white">🔥 Most Read Stories</h2>
+                <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden", marginBottom: "24px" }}>
+                  <div style={{ borderBottom: "1px solid var(--border)", padding: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+                    <span>🔥</span>
+                    <h2 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "16px", letterSpacing: "0.08em", color: "var(--text)" }}>MOST READ STORIES</h2>
                   </div>
-                  <div className="divide-y divide-white/5">
+                  <div>
                     {[...posts]
                       .sort((a, b) => (b.views || 0) - (a.views || 0))
                       .slice(0, 5)
                       .map((post, i) => (
-                        <div key={post.id} className="flex items-center gap-4 p-4">
-                          <span className="font-display text-2xl text-muted">{String(i + 1).padStart(2, "0")}</span>
-                          <div className="min-w-0 flex-1">
-                            <p className="truncate font-bold text-white text-sm">{post.title}</p>
-                            <p className="text-xs text-muted">{categoryLabel(post.category)}</p>
+                        <div key={post.id} style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px 16px", borderBottom: i < 4 ? "1px solid var(--border)" : "none" }}>
+                          <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "24px", color: "var(--text3)", minWidth: "32px" }}>{String(i + 1).padStart(2, "0")}</span>
+                          <div style={{ minWidth: 0, flex: 1 }}>
+                            <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.title}</p>
+                            <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--text3)" }}>{categoryLabel(post.category)}</p>
                           </div>
-                          <span className="rounded-full bg-amber/10 px-3 py-1 text-xs font-black text-amber">
+                          <span style={{ background: "var(--bg3)", border: "1px solid var(--border)", borderRadius: "999px", padding: "4px 10px", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", color: "var(--red)" }}>
                             {post.views} views
                           </span>
                         </div>
@@ -465,55 +499,55 @@ export default function AdminEditor() {
 
                 {/* Quick Queue Alert */}
                 {stats.queuePending > 0 && (
-                  <div className="mt-6 flex items-center justify-between rounded-[8px] border border-amber/30 bg-amber/10 p-5">
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px", background: "rgba(232,57,42,0.08)", border: "1px solid var(--red)", borderRadius: "6px", padding: "16px" }}>
                     <div>
-                      <p className="font-bold text-amber">
+                      <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", fontWeight: 600, color: "var(--text)" }}>
                         ✦ You have {stats.queuePending} AI-crawled stories awaiting editorial review!
                       </p>
-                      <p className="text-xs text-muted mt-1">
+                      <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: "var(--text3)", marginTop: "4px" }}>
                         Sources: Anime News Network, MyAnimeList, CBR, Kotaku, Sportskeeda.
                       </p>
                     </div>
-                    <button onClick={() => setTab("queue")} className="btn btn-primary text-xs">
+                    <button onClick={() => setTab("queue")} style={{ background: "var(--red)", color: "#fff", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "13px", letterSpacing: "0.08em", padding: "8px 16px", borderRadius: "6px", border: "none", cursor: "pointer" }}>
                       Open Review Queue →
                     </button>
                   </div>
                 )}
 
                 {/* Recent Posts Table */}
-                <div className="glass mt-8 overflow-hidden rounded-[8px] border border-white/10 bg-[#16161F]">
-                  <div className="border-b border-white/10 p-5 flex items-center justify-between">
-                    <h2 className="font-display text-xl italic font-bold text-white">Recent Published Stories</h2>
-                    <button onClick={() => setTab("posts")} className="text-xs text-amber font-bold hover:underline">
+                <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden", marginTop: "24px" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "16px", borderBottom: "1px solid var(--border)", background: "var(--bg3)" }}>
+                    <h2 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "14px", letterSpacing: "0.08em", color: "var(--text3)" }}>RECENT PUBLISHED STORIES</h2>
+                    <button onClick={() => setTab("posts")} style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: "var(--red)", background: "none", border: "none", cursor: "pointer" }}>
                       View All ({posts.length}) →
                     </button>
                   </div>
-                  <div className="overflow-x-auto">
-                    <table className="w-full min-w-[720px] text-left text-sm">
-                      <thead className="text-muted border-b border-white/5 bg-white/[0.02]">
-                        <tr>
-                          <th className="p-4">Title</th>
-                          <th className="p-4">Category</th>
-                          <th className="p-4">Status</th>
-                          <th className="p-4">Date</th>
-                          <th className="p-4">Action</th>
+                  <div style={{ overflowX: "auto" }}>
+                    <table style={{ width: "100%", minWidth: "720px", textAlign: "left", fontSize: "13px", borderCollapse: "collapse" }}>
+                      <thead style={{ background: "var(--bg3)" }}>
+                        <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                          <th style={{ padding: "12px 16px", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)", fontWeight: 400 }}>TITLE</th>
+                          <th style={{ padding: "12px 16px", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)", fontWeight: 400 }}>CATEGORY</th>
+                          <th style={{ padding: "12px 16px", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)", fontWeight: 400 }}>STATUS</th>
+                          <th style={{ padding: "12px 16px", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)", fontWeight: 400 }}>DATE</th>
+                          <th style={{ padding: "12px 16px", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)", fontWeight: 400 }}>ACTION</th>
                         </tr>
                       </thead>
                       <tbody>
                         {posts.slice(0, 6).map((post) => (
-                          <tr key={post.id} className="border-t border-white/5 hover:bg-white/[0.02] transition">
-                            <td className="p-4 font-bold text-white max-w-[320px] truncate">{post.title}</td>
-                            <td className="p-4 text-muted">
-                              <span className="badge" style={{ fontSize: "10px", padding: "2px 6px" }}>
-                                {categoryLabel(post.category)}
+                          <tr key={post.id} style={{ borderBottom: "1px solid #1A1A24" }}>
+                            <td style={{ padding: "12px 16px", fontWeight: 600, color: "var(--text)", maxWidth: "320px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{post.title}</td>
+                            <td style={{ padding: "12px 16px" }}>
+                              <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "10px", letterSpacing: "0.08em", padding: "2px 8px", borderRadius: "3px", background: "var(--text3)", color: "#fff" }}>
+                                {categoryLabel(post.category).toUpperCase()}
                               </span>
                             </td>
-                            <td className="p-4">
+                            <td style={{ padding: "12px 16px" }}>
                               <StatusBadge published={post.published} />
                             </td>
-                            <td className="p-4 text-muted">{post.date.slice(0, 10)}</td>
-                            <td className="p-4 flex gap-2">
-                              <button onClick={() => editPost(post)} className="text-amber font-bold text-xs hover:underline">
+                            <td style={{ padding: "12px 16px", color: "var(--text3)", fontSize: "12px" }}>{post.date.slice(0, 10)}</td>
+                            <td style={{ padding: "12px 16px" }}>
+                              <button onClick={() => editPost(post)} style={{ color: "var(--blue)", fontSize: "12px", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}>
                                 Edit
                               </button>
                             </td>
@@ -529,33 +563,50 @@ export default function AdminEditor() {
             {/* ─── 2. AI NEWS REVIEW QUEUE TAB ─── */}
             {tab === "queue" && (
               <div>
-                <div className="flex flex-wrap items-center justify-between gap-4">
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "24px" }}>
                   <div>
-                    <h1 className="font-display text-3xl md:text-4xl italic font-bold text-white">
-                      AI News Review Queue
-                    </h1>
-                    <p className="text-sm text-muted mt-1">
+                    <h1 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "28px", letterSpacing: "0.06em", color: "var(--text)" }}>AI NEWS REVIEW QUEUE</h1>
+                    <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", color: "var(--text3)", marginTop: "4px" }}>
                       Crawled, deduplicated, and formatted by the Ghibli Gazette AI agent. Review and publish with 1 click.
                     </p>
                   </div>
                   <button
                     onClick={handleCrawlNews}
                     disabled={crawling}
-                    className="btn btn-primary text-sm flex items-center gap-2"
+                    style={{
+                      background: "var(--red)",
+                      color: "#fff",
+                      fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+                      fontSize: "13px",
+                      letterSpacing: "0.06em",
+                      padding: "8px 16px",
+                      borderRadius: "6px",
+                      border: "none",
+                      cursor: crawling ? "not-allowed" : "pointer",
+                      opacity: crawling ? 0.6 : 1
+                    }}
                   >
-                    <span>{crawling ? "📡 Crawling Sources..." : "🔄 Crawl & Fetch News"}</span>
+                    {crawling ? "📡 Crawling..." : "🔄 Crawl & Fetch News"}
                   </button>
                 </div>
 
-                {/* Queue Filter Bar */}
-                <div className="mt-6 flex gap-2 border-b border-white/10 pb-3">
+                <div style={{ display: "flex", gap: "8px", borderBottom: "1px solid var(--border)", paddingBottom: "12px", marginBottom: "16px" }}>
                   {(["pending", "approved", "all"] as QueueFilter[]).map((f) => (
                     <button
                       key={f}
                       onClick={() => setQueueFilter(f)}
-                      className={`rounded-full px-4 py-1.5 text-xs font-black transition ${
-                        queueFilter === f ? "bg-amber text-black" : "bg-white/[0.04] text-muted hover:text-white"
-                      }`}
+                      style={{
+                        padding: "6px 14px",
+                        borderRadius: "999px",
+                        fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        border: queueFilter === f ? "1px solid var(--red)" : "1px solid var(--border)",
+                        background: queueFilter === f ? "var(--red)" : "transparent",
+                        color: queueFilter === f ? "#fff" : "var(--text3)",
+                        transition: "all 0.15s ease"
+                      }}
                     >
                       {f === "pending"
                         ? `Pending (${queue.filter((q) => q.status === "pending").length})`
@@ -566,85 +617,83 @@ export default function AdminEditor() {
                   ))}
                 </div>
 
-                {/* Queue Items */}
                 {filteredQueue.length === 0 ? (
-                  <div className="mt-8 rounded-[8px] border border-white/10 bg-[#16161F] p-12 text-center">
-                    <p className="font-display text-2xl italic text-white">No stories in this queue</p>
-                    <p className="mt-2 text-sm text-muted">
+                  <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "40px", textAlign: "center" }}>
+                    <p style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "20px", color: "var(--text)", letterSpacing: "0.06em" }}>No stories in this queue</p>
+                    <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", color: "var(--text3)", marginTop: "8px" }}>
                       Click the "Crawl & Fetch News" button above to scan top anime outlets and generate ready-to-publish drafts.
                     </p>
                     <button
                       onClick={handleCrawlNews}
                       disabled={crawling}
-                      className="btn btn-primary mt-6 text-sm"
+                      style={{ marginTop: "16px", background: "var(--red)", color: "#fff", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "13px", letterSpacing: "0.06em", padding: "8px 16px", borderRadius: "6px", border: "none", cursor: "pointer" }}
                     >
                       {crawling ? "Scanning Feeds..." : "Scan & Fetch News Now"}
                     </button>
                   </div>
                 ) : (
-                  <div className="mt-6 grid gap-4">
+                  <div style={{ display: "grid", gap: "12px" }}>
                     {filteredQueue.map((story) => (
                       <article
                         key={story.id}
-                        className="rounded-[8px] border border-white/10 bg-[#16161F] p-5 transition hover:border-amber/40"
+                        style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "16px", transition: "border-color 0.15s ease" }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                       >
-                        <div className="grid gap-4 md:grid-cols-[140px_1fr_auto]">
-                          {/* Image Preview with Controls */}
-                          <div className="flex flex-col gap-1.5 w-full md:w-36">
-                            <div className="relative h-24 w-full overflow-hidden rounded-[6px] bg-[#1E1E2A]">
+                        <div style={{ display: "grid", gap: "16px", gridTemplateColumns: "140px 1fr auto" }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            <div style={{ position: "relative", height: "96px", width: "100%", overflow: "hidden", borderRadius: "6px", background: "var(--bg3)" }}>
                               <img
                                 src={story.coverImage || getPostCoverImage(story)}
                                 alt={story.title}
-                                className="h-full w-full object-cover"
+                                style={{ height: "100%", width: "100%", objectFit: "cover" }}
                               />
-                              <span className="absolute bottom-1 right-1 rounded bg-black/80 px-1.5 py-0.5 text-[9px] font-bold text-amber">
+                              <span style={{ position: "absolute", bottom: "4px", right: "4px", background: "rgba(0,0,0,0.8)", color: "var(--gold)", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "10px", padding: "2px 6px", borderRadius: "3px" }}>
                                 ✓ {story.confidenceScore}% Match
                               </span>
                             </div>
                             <button
                               type="button"
                               onClick={() => cycleStoryImage(story)}
-                              className="rounded bg-white/[0.06] hover:bg-white/[0.12] px-2 py-1 text-[10px] font-bold text-muted hover:text-cream text-center transition"
-                              title="Cycle through official high-res visual variations"
+                              style={{ background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text3)", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "11px", letterSpacing: "0.06em", padding: "4px", borderRadius: "4px", cursor: "pointer" }}
                             >
                               ⚡ Change Visual
                             </button>
                           </div>
 
-                          {/* Content Details */}
-                          <div className="flex flex-col justify-between">
+                          <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                             <div>
-                              <div className="flex flex-wrap items-center gap-2 mb-2">
-                                <span className="badge" style={{ fontSize: "10px", padding: "2px 6px" }}>
-                                  {categoryLabel(story.category)}
+                              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                                <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "11px", letterSpacing: "0.08em", padding: "2px 8px", borderRadius: "3px", background: "var(--blue)", color: "#fff" }}>
+                                  {categoryLabel(story.category).toUpperCase()}
                                 </span>
-                                <span className="text-xs text-muted">
-                                  Source: <strong className="text-cream">{story.sourceName}</strong>
+                                <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--text3)" }}>
+                                  Source: <strong style={{ color: "var(--text)" }}>{story.sourceName}</strong>
                                 </span>
                                 {story.sourceUrl && (
                                   <a
                                     href={story.sourceUrl}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="text-xs text-amber hover:underline"
+                                    style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--red)", textDecoration: "underline" }}
                                   >
                                     [Original Link ↗]
                                   </a>
                                 )}
                               </div>
 
-                              <h3 className="font-display text-lg font-bold text-white line-clamp-2">
+                              <h3 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: "15px", fontWeight: 700, color: "var(--text)", lineHeight: 1.3 }}>
                                 {story.title}
                               </h3>
 
-                              <p className="mt-1.5 text-xs text-muted line-clamp-2">{story.excerpt}</p>
+                              <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: "var(--text3)", lineHeight: 1.5, marginTop: "6px", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{story.excerpt}</p>
                             </div>
 
-                            <div className="mt-3 flex flex-wrap gap-1">
+                            <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", marginTop: "12px" }}>
                               {story.tags.map((t) => (
                                 <span
                                   key={t}
-                                  className="rounded bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-muted"
+                                  style={{ background: "var(--bg3)", border: "1px solid var(--border)", padding: "2px 8px", borderRadius: "999px", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--text3)" }}
                                 >
                                   #{t}
                                 </span>
@@ -652,33 +701,32 @@ export default function AdminEditor() {
                             </div>
                           </div>
 
-                          {/* Actions */}
-                          <div className="flex flex-row md:flex-col justify-end gap-2 shrink-0">
+                          <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", gap: "8px", minWidth: "140px" }}>
                             {story.status === "pending" ? (
                               <>
                                 <button
                                   onClick={() => handleApproveStory(story)}
-                                  className="btn btn-primary text-xs w-full py-2"
-                                  title="Publish immediately to homepage"
+                                  style={{ background: "var(--red)", color: "#fff", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "13px", letterSpacing: "0.06em", padding: "8px 12px", borderRadius: "6px", border: "none", cursor: "pointer", transition: "background 0.15s ease" }}
+                                  onMouseEnter={(e) => e.currentTarget.style.background = "var(--red2)"}
+                                  onMouseLeave={(e) => e.currentTarget.style.background = "var(--red)"}
                                 >
                                   🚀 Approve & Publish
                                 </button>
                                 <button
                                   onClick={() => handleEditQueuedInDesk(story)}
-                                  className="btn btn-outline text-xs w-full py-2"
-                                  title="Load into rich text editor"
+                                  style={{ background: "transparent", border: "1px solid var(--border2)", color: "var(--text2)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", padding: "6px 12px", borderRadius: "6px", cursor: "pointer" }}
                                 >
                                   ✏️ Polish in Desk
                                 </button>
                                 <button
                                   onClick={() => handleDismissStory(story.id)}
-                                  className="btn btn-outline text-xs text-[#ff7b7b] hover:border-[#ff7b7b] py-1.5"
+                                  style={{ background: "transparent", border: "1px solid var(--border2)", color: "var(--red)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", padding: "6px 12px", borderRadius: "6px", cursor: "pointer" }}
                                 >
                                   ✕ Dismiss
                                 </button>
                               </>
                             ) : (
-                              <span className="rounded bg-[#2D9966]/20 px-3 py-1.5 text-center text-xs font-bold text-[#7dffb2]">
+                              <span style={{ background: "#0f2a1a", color: "#2ECC71", border: "1px solid #2ECC7144", padding: "6px 12px", borderRadius: "999px", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, textAlign: "center" }}>
                                 ✓ Approved
                               </span>
                             )}
@@ -694,39 +742,41 @@ export default function AdminEditor() {
             {/* ─── 3. NEW STORY / EDIT STORY TAB ─── */}
             {tab === "new" && (
               <div>
-                <div className="flex flex-wrap items-center justify-between gap-4">
+                <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "16px", marginBottom: "24px" }}>
                   <div>
-                    <h1 className="font-display text-3xl md:text-4xl italic font-bold text-white">
-                      {editingId ? "Edit Story" : "Editorial Desk"}
+                    <h1 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "28px", letterSpacing: "0.06em", color: "var(--text)" }}>
+                      {editingId ? "EDIT STORY" : "EDITORIAL DESK"}
                     </h1>
-                    <p className="text-sm text-muted mt-1">Write, format, and publish articles.</p>
+                    <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", color: "var(--text3)", marginTop: "4px" }}>Write, format, and publish articles.</p>
                   </div>
                   {editingId && (
-                    <button onClick={resetForm} className="btn btn-outline min-h-0 px-4 py-2 text-sm">
+                    <button onClick={resetForm} style={{ background: "transparent", border: "1px solid var(--border2)", color: "var(--text2)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", padding: "8px 16px", borderRadius: "6px", cursor: "pointer" }}>
                       Start New Story
                     </button>
                   )}
                 </div>
 
-                <div className="mt-8 grid gap-5 max-w-4xl">
+                <div style={{ display: "grid", gap: "20px", maxWidth: "720px" }}>
                   {/* Headline */}
                   <div>
-                    <label className="text-xs font-black text-muted uppercase tracking-wider mb-2 block">
+                    <label style={{ display: "block", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)", marginBottom: "6px" }}>
                       Headline
                     </label>
                     <input
                       value={draft.title ?? ""}
                       onChange={(event) => updateDraft("title", event.target.value)}
-                      className="w-full rounded-[8px] border border-white/10 bg-[#16161F] px-5 py-4 font-display text-2xl md:text-3xl italic font-bold text-white outline-none transition placeholder:text-muted focus:border-amber"
                       placeholder="Enter a compelling story title..."
+                      style={{ width: "100%", background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "12px 14px", color: "var(--text)", fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: "20px", fontStyle: "italic", fontWeight: 700, outline: "none" }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                      onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                     />
                   </div>
 
                   {/* Excerpt */}
-                  <label className="grid gap-2">
-                    <div className="flex justify-between items-center text-xs font-black text-muted uppercase tracking-wider">
-                      <span>Excerpt / Teaser</span>
-                      <span className={(draft.excerpt?.length ?? 0) > 180 ? "text-[#ff7b7b]" : "text-amber"}>
+                  <label style={{ display: "grid", gap: "6px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Excerpt / Teaser</span>
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: (draft.excerpt?.length ?? 0) > 180 ? "var(--red)" : "var(--red)" }}>
                         {draft.excerpt?.length ?? 0}/180
                       </span>
                     </div>
@@ -734,19 +784,21 @@ export default function AdminEditor() {
                       rows={3}
                       value={draft.excerpt ?? ""}
                       onChange={(event) => updateDraft("excerpt", event.target.value.slice(0, 180))}
-                      className="rounded-[8px] border border-white/10 bg-[#16161F] px-4 py-3 text-cream text-sm outline-none transition placeholder:text-muted focus:border-amber"
                       placeholder="A short, engaging two-sentence summary..."
+                      style={{ width: "100%", background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "14px", outline: "none", resize: "vertical" }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                      onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                     />
                   </label>
 
                   {/* Category & Tags */}
-                  <div className="grid gap-5 md:grid-cols-2">
-                    <label className="grid gap-2">
-                      <span className="text-xs font-black text-muted uppercase tracking-wider">Category</span>
+                  <div style={{ display: "grid", gap: "16px", gridTemplateColumns: "1fr 1fr" }}>
+                    <label style={{ display: "grid", gap: "6px" }}>
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Category</span>
                       <select
                         value={draft.category ?? "general"}
                         onChange={(event) => updateDraft("category", event.target.value as Category)}
-                        className="rounded-[8px] border border-white/10 bg-[#16161F] px-4 py-3 text-cream outline-none focus:border-amber"
+                        style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "14px", outline: "none" }}
                       >
                         {categories.map((category) => (
                           <option key={category.id} value={category.id}>
@@ -756,8 +808,8 @@ export default function AdminEditor() {
                       </select>
                     </label>
 
-                    <label className="grid gap-2">
-                      <span className="text-xs font-black text-muted uppercase tracking-wider">Tags (comma separated)</span>
+                    <label style={{ display: "grid", gap: "6px" }}>
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Tags (comma separated)</span>
                       <input
                         value={tagsText}
                         onChange={(event) =>
@@ -766,89 +818,120 @@ export default function AdminEditor() {
                             event.target.value.split(",").map((tag) => tag.trim()).filter(Boolean)
                           )
                         }
-                        className="rounded-[8px] border border-white/10 bg-[#16161F] px-4 py-3 text-cream outline-none focus:border-amber"
                         placeholder="Studio Ghibli, Miyazaki, Review"
+                        style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "14px", outline: "none" }}
+                        onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                        onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                       />
                     </label>
                   </div>
 
                   {/* Cover Image URL */}
-                  <label className="grid gap-2">
-                    <span className="text-xs font-black text-muted uppercase tracking-wider">Cover Image URL (optional)</span>
+                  <label style={{ display: "grid", gap: "6px" }}>
+                    <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Cover Image URL (optional)</span>
                     <input
                       value={draft.coverImage ?? ""}
                       onChange={(event) => updateDraft("coverImage", event.target.value)}
-                      className="rounded-[8px] border border-white/10 bg-[#16161F] px-4 py-3 text-cream outline-none focus:border-amber text-sm font-mono"
                       placeholder="https://images.unsplash.com/... or leave blank for auto-matching"
+                      style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "monospace", fontSize: "12px", outline: "none" }}
+                      onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                      onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                     />
                   </label>
 
+                  {/* Published Toggle */}
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px", padding: "12px", background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px" }}>
+                    <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Published</span>
+                    <button
+                      type="button"
+                      onClick={() => updateDraft("published", !draft.published)}
+                      style={{
+                        width: "44px",
+                        height: "24px",
+                        borderRadius: "999px",
+                        background: draft.published ? "var(--red)" : "var(--border2)",
+                        border: "none",
+                        position: "relative",
+                        cursor: "pointer",
+                        transition: "background 0.2s ease"
+                      }}
+                    >
+                      <span style={{
+                        position: "absolute",
+                        top: "2px",
+                        left: draft.published ? "22px" : "2px",
+                        width: "20px",
+                        height: "20px",
+                        borderRadius: "50%",
+                        background: "#fff",
+                        transition: "left 0.2s ease",
+                        boxShadow: "0 1px 4px rgba(0,0,0,0.3)"
+                      }} />
+                    </button>
+                    <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: draft.published ? "var(--green)" : "var(--text3)" }}>{draft.published ? "Live" : "Draft"}</span>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", marginLeft: "auto" }}>
+                      <input type="checkbox" checked={!!draft.featured} onChange={(e) => updateDraft("featured", e.target.checked)} style={{ accentColor: "var(--red)" }} />
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: "var(--text2)" }}>Featured</span>
+                    </label>
+                  </div>
+
                   {/* Rich Text Editor Toolbar */}
-                  <div className="glass rounded-[8px] border border-white/10 bg-[#16161F] p-4">
-                    <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-3">
-                      {/* Formatting Buttons */}
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => insertFormat("<strong>", "</strong>")}
-                          className="rounded px-2.5 py-1 text-xs font-bold bg-white/[0.06] hover:bg-white/[0.12] text-cream"
-                        >
-                          Bold
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertFormat("<em>", "</em>")}
-                          className="rounded px-2.5 py-1 text-xs font-bold bg-white/[0.06] hover:bg-white/[0.12] text-cream"
-                        >
-                          Italic
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertFormat("<h2>", "</h2>")}
-                          className="rounded px-2.5 py-1 text-xs font-bold bg-white/[0.06] hover:bg-white/[0.12] text-cream"
-                        >
-                          H2 Heading
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertFormat("<blockquote>", "</blockquote>")}
-                          className="rounded px-2.5 py-1 text-xs font-bold bg-white/[0.06] hover:bg-white/[0.12] text-cream"
-                        >
-                          Quote
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertFormat('<a href="https://..." target="_blank">', "</a>")}
-                          className="rounded px-2.5 py-1 text-xs font-bold bg-white/[0.06] hover:bg-white/[0.12] text-cream"
-                        >
-                          Link
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => insertFormat("<p>", "</p>")}
-                          className="rounded px-2.5 py-1 text-xs font-bold bg-white/[0.06] hover:bg-white/[0.12] text-cream"
-                        >
-                          Paragraph
-                        </button>
+                  <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "16px" }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: "12px", borderBottom: "1px solid var(--border)", paddingBottom: "12px", marginBottom: "12px" }}>
+                      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px" }}>
+                        {[
+                          ["Bold", "<strong>", "</strong>"],
+                          ["Italic", "<em>", "</em>"],
+                          ["H2", "<h2>", "</h2>"],
+                          ["Quote", "<blockquote>", "</blockquote>"],
+                          ["Link", '<a href="https://..." target="_blank">', "</a>"],
+                          ["Paragraph", "<p>", "</p>"]
+                        ].map(([label, open, close]) => (
+                          <button
+                            key={label as string}
+                            type="button"
+                            onClick={() => insertFormat(open as string, close as string)}
+                            style={{ background: "var(--bg3)", border: "1px solid var(--border)", color: "var(--text2)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", padding: "4px 10px", borderRadius: "4px", cursor: "pointer" }}
+                            onMouseEnter={(e) => e.currentTarget.style.color = "var(--text)"}
+                            onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}
+                          >
+                            {label as string}
+                          </button>
+                        ))}
                       </div>
 
-                      {/* View Toggles */}
-                      <div className="flex gap-2">
+                      <div style={{ display: "flex", gap: "8px" }}>
                         <button
                           type="button"
                           onClick={() => setView("edit")}
-                          className={`rounded-full px-3 py-1 text-xs font-black transition ${
-                            view === "edit" ? "bg-amber text-black" : "text-muted hover:text-white"
-                          }`}
+                          style={{
+                            padding: "4px 12px",
+                            borderRadius: "999px",
+                            fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            border: "none",
+                            background: view === "edit" ? "var(--red)" : "transparent",
+                            color: view === "edit" ? "#fff" : "var(--text3)"
+                          }}
                         >
                           Code Editor
                         </button>
                         <button
                           type="button"
                           onClick={() => setView("preview")}
-                          className={`rounded-full px-3 py-1 text-xs font-black transition ${
-                            view === "preview" ? "bg-amber text-black" : "text-muted hover:text-white"
-                          }`}
+                          style={{
+                            padding: "4px 12px",
+                            borderRadius: "999px",
+                            fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                            fontSize: "12px",
+                            fontWeight: 600,
+                            cursor: "pointer",
+                            border: "none",
+                            background: view === "preview" ? "var(--red)" : "transparent",
+                            color: view === "preview" ? "#fff" : "var(--text3)"
+                          }}
                         >
                           Live Preview
                         </button>
@@ -862,33 +945,40 @@ export default function AdminEditor() {
                         value={draft.content ?? ""}
                         onKeyDown={handleTabKey}
                         onChange={(event) => updateDraft("content", event.target.value)}
-                        className="w-full rounded-[6px] border border-white/5 bg-[#0A0A0F] p-4 font-mono text-sm leading-relaxed text-cream outline-none focus:border-amber"
                         placeholder="Write your HTML content here..."
+                        style={{ width: "100%", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "12px", fontFamily: "monospace", fontSize: "14px", lineHeight: 1.7, color: "var(--text)", outline: "none", minHeight: "320px" }}
+                        onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                        onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                       />
                     ) : (
                       <div
-                        className="prose-article min-h-[380px] rounded-[6px] border border-white/5 bg-[#0A0A0F] p-6"
+                        className="prose-article"
+                        style={{ minHeight: "320px", background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "16px" }}
                         dangerouslySetInnerHTML={{ __html: draft.content ?? "" }}
                       />
                     )}
                   </div>
 
                   {/* Publish & Draft Buttons */}
-                  <div className="flex flex-col gap-3 sm:flex-row mt-4">
-                    <button
-                      type="button"
-                      onClick={() => savePost(false)}
-                      className="btn btn-outline flex-1 py-3 text-sm"
-                    >
-                      Save as Draft
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => savePost(true)}
-                      className="btn btn-primary flex-1 py-3 text-sm"
-                    >
-                      Publish to Live Site ✦
-                    </button>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", gap: "12px" }}>
+                      <button
+                        type="button"
+                        onClick={() => savePost(false)}
+                        style={{ flex: 1, background: "transparent", border: "1px solid var(--border2)", color: "var(--text2)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "14px", fontWeight: 600, padding: "12px", borderRadius: "6px", cursor: "pointer" }}
+                      >
+                        Save Draft
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => savePost(true)}
+                        style={{ flex: 1, background: "var(--red)", color: "#fff", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "16px", letterSpacing: "0.1em", padding: "12px", borderRadius: "6px", border: "none", cursor: "pointer", transition: "background 0.15s ease" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "var(--red2)"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "var(--red)"}
+                      >
+                        Publish to Live Site ✦
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -897,15 +987,25 @@ export default function AdminEditor() {
             {/* ─── 4. ALL POSTS TAB ─── */}
             {tab === "posts" && (
               <div>
-                <h1 className="font-display text-3xl md:text-4xl italic font-bold text-white">All Stories</h1>
-                <div className="mt-6 flex gap-2 overflow-x-auto pb-2">
+                <h1 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "28px", letterSpacing: "0.06em", color: "var(--text)", marginBottom: "16px" }}>ALL STORIES</h1>
+                <div style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "8px", marginBottom: "16px" }}>
                   {["all", "published", "drafts", ...categories.map((category) => category.id)].map((id) => (
                     <button
                       key={id}
                       onClick={() => setFilter(id as PostFilter)}
-                      className={`shrink-0 rounded-full px-4 py-1.5 text-xs font-black transition ${
-                        filter === id ? "bg-amber text-black" : "bg-white/[0.04] text-muted hover:text-white"
-                      }`}
+                      style={{
+                        flexShrink: 0,
+                        padding: "6px 14px",
+                        borderRadius: "999px",
+                        fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+                        fontSize: "12px",
+                        letterSpacing: "0.08em",
+                        cursor: "pointer",
+                        border: filter === id ? "1px solid var(--red)" : "1px solid var(--border)",
+                        background: filter === id ? "var(--red)" : "transparent",
+                        color: filter === id ? "#fff" : "var(--text3)",
+                        transition: "all 0.15s ease"
+                      }}
                     >
                       {id === "all"
                         ? "All Stories"
@@ -922,50 +1022,51 @@ export default function AdminEditor() {
                   value={postSearch}
                   onChange={(event) => setPostSearch(event.target.value)}
                   placeholder="🔍 Search by title, excerpt, or tag..."
-                  className="mt-4 w-full max-w-md rounded-[8px] border border-white/10 bg-[#16161F] px-4 py-2.5 text-sm text-cream outline-none transition placeholder:text-muted focus:border-amber"
+                  style={{ width: "100%", maxWidth: "400px", background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", outline: "none", marginBottom: "16px" }}
+                  onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+                  onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
                 />
 
-                <div className="mt-6 grid gap-3">
+                <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", overflow: "hidden" }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "auto 1fr 100px 80px 100px 60px 60px 60px", gap: "0", padding: "12px 16px", background: "var(--bg3)", borderBottom: "1px solid var(--border)", alignItems: "center" }}>
+                    <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)" }}>TITLE</span>
+                    <span />
+                    <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)" }}>CATEGORY</span>
+                    <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)" }}>STATUS</span>
+                    <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)" }}>DATE</span>
+                    <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "12px", letterSpacing: "0.1em", color: "var(--text3)" }}>VIEWS</span>
+                    <span />
+                    <span />
+                  </div>
                   {filteredPosts.length === 0 ? (
-                    <p className="py-12 text-center text-sm text-muted">No stories match your filters or search.</p>
+                    <p style={{ padding: "40px", textAlign: "center", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", color: "var(--text3)" }}>No stories match your filters or search.</p>
                   ) : (
                     filteredPosts.map((post) => (
                       <div
                         key={post.id}
-                        className="glass grid gap-3 rounded-[8px] p-4 md:grid-cols-[auto_1fr_auto_auto_auto_auto_auto_auto] md:items-center border border-white/10 bg-[#16161F]"
+                        style={{ display: "grid", gridTemplateColumns: "auto 1fr 100px 80px 100px 60px 60px 60px", gap: "0", padding: "12px 16px", borderBottom: "1px solid #1A1A24", alignItems: "center", transition: "background 0.15s ease" }}
+                        onMouseEnter={(e) => e.currentTarget.style.background = "var(--bg3)"}
+                        onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
                       >
-                        <span className="h-3.5 w-3.5 rounded-full" style={{ background: post.coverColor || "#E8643A" }} />
-                        <p className="truncate font-bold text-white">{post.title}</p>
+                        <span style={{ height: "12px", width: "12px", borderRadius: "50%", background: post.coverColor || "var(--red)", display: "inline-block" }} />
+                        <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", fontWeight: 600, color: "var(--text)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", padding: "0 12px" }}>{post.title}</p>
                         <span
-                          className="w-fit rounded-full px-2.5 py-0.5 text-[10px] font-black text-white"
-                          style={{ background: categoryGradient(post.category) }}
+                          style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "10px", letterSpacing: "0.08em", padding: "2px 8px", borderRadius: "3px", background: "var(--border2)", color: "#fff", textAlign: "center" }}
                         >
-                          {categoryLabel(post.category)}
+                          {categoryLabel(post.category).toUpperCase()}
                         </span>
                         <StatusBadge published={post.published} />
-                        <time className="text-xs font-bold text-muted">{post.date.slice(0, 10)}</time>
-                        <span className="text-xs font-bold text-amber">{post.views} views</span>
-                        {post.published ? (
-                          <a
-                            href={`/blog/${post.id}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="rounded-full border border-white/10 px-3 py-1 text-xs text-cream transition hover:border-amber"
-                          >
-                            View ↗
-                          </a>
-                        ) : (
-                          <span className="w-14" />
-                        )}
+                        <time style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", color: "var(--text3)" }}>{post.date.slice(0, 10)}</time>
+                        <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--red)" }}>{post.views}</span>
                         <button
                           onClick={() => editPost(post)}
-                          className="rounded-full border border-white/10 px-3 py-1 text-xs text-amber transition hover:border-amber"
+                          style={{ color: "var(--blue)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}
                         >
                           Edit
                         </button>
                         <button
                           onClick={() => setConfirmPost(post)}
-                          className="rounded-full border border-white/10 px-3 py-1 text-xs text-[#ff7b7b] transition hover:border-[#ff7b7b]"
+                          style={{ color: "var(--red)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, background: "none", border: "none", cursor: "pointer" }}
                         >
                           Delete
                         </button>
@@ -978,41 +1079,41 @@ export default function AdminEditor() {
 
             {/* ─── 5. SETTINGS TAB ─── */}
             {tab === "settings" && (
-              <form onSubmit={saveSettings} className="max-w-2xl">
-                <h1 className="font-display text-3xl md:text-4xl italic font-bold text-white">Settings</h1>
-                <div className="glass mt-8 grid gap-5 rounded-[8px] p-6 border border-white/10 bg-[#16161F]">
-                  <div className="grid gap-5 md:grid-cols-2">
-                    <label className="grid gap-2">
-                      <span className="text-xs font-black text-muted uppercase tracking-wider">Site Name</span>
+              <form onSubmit={saveSettings} style={{ maxWidth: "640px" }}>
+                <h1 style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "28px", letterSpacing: "0.06em", color: "var(--text)", marginBottom: "24px" }}>SETTINGS</h1>
+                <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "6px", padding: "24px", display: "grid", gap: "20px" }}>
+                  <div style={{ display: "grid", gap: "16px", gridTemplateColumns: "1fr 1fr" }}>
+                    <label style={{ display: "grid", gap: "6px" }}>
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Site Name</span>
                       <input
                         value={settings.siteName}
                         onChange={(event) => setSettings((current) => ({ ...current, siteName: event.target.value }))}
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm text-cream outline-none focus:border-amber"
                         placeholder="Ghibli Gazette"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "14px", outline: "none" }}
                       />
                     </label>
-                    <label className="grid gap-2">
-                      <span className="text-xs font-black text-muted uppercase tracking-wider">Tagline</span>
+                    <label style={{ display: "grid", gap: "6px" }}>
+                      <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)" }}>Tagline</span>
                       <input
                         value={settings.tagline}
                         onChange={(event) => setSettings((current) => ({ ...current, tagline: event.target.value }))}
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm text-cream outline-none focus:border-amber"
                         placeholder="Your anime & manga news hub..."
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "14px", outline: "none" }}
                       />
                     </label>
                   </div>
 
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-xs font-black text-muted uppercase tracking-wider mb-3">Change Password</p>
-                    <div className="grid gap-3 md:grid-cols-3">
+                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: "16px" }}>
+                    <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)", marginBottom: "12px" }}>Change Password</p>
+                    <div style={{ display: "grid", gap: "12px", gridTemplateColumns: "1fr 1fr 1fr" }}>
                       <input
                         value={passwords.current}
                         onChange={(event) =>
                           setPasswords((current) => ({ ...current, current: event.target.value }))
                         }
                         type="password"
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm outline-none focus:border-amber"
                         placeholder="Current password"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontSize: "14px", outline: "none" }}
                       />
                       <input
                         value={passwords.next}
@@ -1020,8 +1121,8 @@ export default function AdminEditor() {
                           setPasswords((current) => ({ ...current, next: event.target.value }))
                         }
                         type="password"
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm outline-none focus:border-amber"
                         placeholder="New password"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontSize: "14px", outline: "none" }}
                       />
                       <input
                         value={passwords.confirm}
@@ -1029,45 +1130,45 @@ export default function AdminEditor() {
                           setPasswords((current) => ({ ...current, confirm: event.target.value }))
                         }
                         type="password"
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm outline-none focus:border-amber"
                         placeholder="Confirm new"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontSize: "14px", outline: "none" }}
                       />
                     </div>
                   </div>
 
-                  <div className="border-t border-white/10 pt-4">
-                    <p className="text-xs font-black text-muted uppercase tracking-wider mb-3">Social Media Handles</p>
-                    <div className="grid gap-3 md:grid-cols-3">
+                  <div style={{ borderTop: "1px solid var(--border)", paddingTop: "16px" }}>
+                    <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "12px", fontWeight: 600, color: "var(--text2)", marginBottom: "12px" }}>Social Media Handles</p>
+                    <div style={{ display: "grid", gap: "12px", gridTemplateColumns: "1fr 1fr 1fr" }}>
                       <input
                         value={settings.instagram}
                         onChange={(event) =>
                           setSettings((current) => ({ ...current, instagram: event.target.value }))
                         }
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm outline-none focus:border-amber"
                         placeholder="Instagram URL"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontSize: "14px", outline: "none" }}
                       />
                       <input
                         value={settings.discord}
                         onChange={(event) =>
                           setSettings((current) => ({ ...current, discord: event.target.value }))
                         }
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm outline-none focus:border-amber"
                         placeholder="Discord URL"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontSize: "14px", outline: "none" }}
                       />
                       <input
                         value={settings.twitter}
                         onChange={(event) =>
                           setSettings((current) => ({ ...current, twitter: event.target.value }))
                         }
-                        className="rounded-[8px] border border-white/10 bg-[#0A0A0F] px-4 py-3 text-sm outline-none focus:border-amber"
                         placeholder="𝕏 / Twitter URL"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)", borderRadius: "6px", padding: "10px 14px", color: "var(--text)", fontSize: "14px", outline: "none" }}
                       />
                     </div>
                   </div>
 
-                  {settingsMessage && <p className="font-bold text-sm text-amber">{settingsMessage}</p>}
+                  {settingsMessage && <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", fontWeight: 600, color: "var(--red)" }}>{settingsMessage}</p>}
 
-                  <button className="btn btn-primary w-fit mt-2" type="submit">
+                  <button type="submit" style={{ width: "fit-content", background: "var(--red)", color: "#fff", fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "14px", letterSpacing: "0.08em", padding: "10px 20px", borderRadius: "6px", border: "none", cursor: "pointer" }}>
                     Save Changes
                   </button>
                 </div>
@@ -1078,17 +1179,17 @@ export default function AdminEditor() {
 
         {/* Delete Confirmation Modal */}
         {confirmPost && (
-          <div className="fixed inset-0 z-[90] grid place-items-center bg-black/70 p-4 backdrop-blur">
-            <div className="glass max-w-md rounded-[8px] p-6 text-center border border-white/10 bg-[#16161F]">
-              <h2 className="font-display text-2xl italic font-bold text-white">Delete this story?</h2>
-              <p className="mt-2 text-sm text-muted">{confirmPost.title}</p>
-              <div className="mt-6 flex justify-center gap-3">
-                <button onClick={() => setConfirmPost(null)} className="btn btn-outline text-xs">
+          <div style={{ position: "fixed", inset: 0, zIndex: 90, display: "grid", placeItems: "center", background: "rgba(0,0,0,0.7)", padding: "16px", backdropFilter: "blur(4px)" }}>
+            <div style={{ background: "var(--card)", border: "1px solid var(--border)", borderRadius: "8px", padding: "24px", textAlign: "center", maxWidth: "400px", width: "100%" }}>
+              <h2 style={{ fontFamily: "var(--font-playfair, 'Playfair Display', serif)", fontSize: "20px", fontWeight: 700, color: "var(--text)" }}>Delete this story?</h2>
+              <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", color: "var(--text3)", marginTop: "8px" }}>{confirmPost.title}</p>
+              <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "20px" }}>
+                <button onClick={() => setConfirmPost(null)} style={{ background: "transparent", border: "1px solid var(--border2)", color: "var(--text2)", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", padding: "8px 16px", borderRadius: "6px", cursor: "pointer" }}>
                   Cancel
                 </button>
                 <button
                   onClick={deleteCurrentPost}
-                  className="btn bg-[#d94848] text-white hover:bg-[#ff5555] text-xs"
+                  style={{ background: "var(--red)", color: "#fff", fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", padding: "8px 16px", borderRadius: "6px", border: "none", cursor: "pointer" }}
                 >
                   Delete Forever
                 </button>
@@ -1104,9 +1205,18 @@ export default function AdminEditor() {
 function StatusBadge({ published }: { published: boolean }) {
   return (
     <span
-      className={`w-fit rounded-full px-2.5 py-0.5 text-[10px] font-black ${
-        published ? "bg-[#2D9966]/20 text-[#7dffb2]" : "bg-white/10 text-muted"
-      }`}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        padding: "2px 8px",
+        borderRadius: "999px",
+        fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+        fontSize: "10px",
+        letterSpacing: "0.08em",
+        border: published ? "1px solid #2ECC7144" : "1px solid #333344",
+        background: published ? "#0f2a1a" : "#1a1a1a",
+        color: published ? "#2ECC71" : "#5A5868"
+      }}
     >
       {published ? "Live" : "Draft"}
     </span>

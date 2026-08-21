@@ -45,7 +45,7 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
         minHeight: "100vh",
         display: "grid",
         placeItems: "center",
-        background: "var(--bg-primary)",
+        background: "var(--bg)",
         padding: "20px"
       }}
     >
@@ -54,61 +54,68 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
         className={shaking ? "shake" : ""}
         style={{
           width: "100%",
-          maxWidth: "400px",
-          background: "var(--bg-card)",
+          maxWidth: "380px",
+          background: "var(--card)",
           border: "1px solid var(--border)",
           borderRadius: "8px",
           padding: "40px",
           textAlign: "center"
         }}
       >
-        <div
-          style={{
-            width: "48px",
-            height: "48px",
-            borderRadius: "8px",
-            background: "var(--accent)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            margin: "0 auto 20px"
-          }}
-        >
-          <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "20px", color: "#fff" }}>
-            GG
+        <div style={{ marginBottom: "20px" }}>
+          <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "32px", color: "var(--text)", letterSpacing: "0.03em" }}>
+            GHIBLI
+          </span>
+          <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "32px", color: "var(--red)", letterSpacing: "0.03em", marginLeft: "6px" }}>
+            GAZETTE
           </span>
         </div>
-        <h1
-          style={{
-            fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-            fontSize: "28px",
-            letterSpacing: "0.1em",
-            color: "var(--text-primary)",
-            marginBottom: "8px"
-          }}
-        >
-          ADMIN ACCESS
-        </h1>
-        <p style={{ fontSize: "13px", color: "var(--text-muted)", marginBottom: "24px" }}>
-          Enter password to manage Ghibli Gazette
+        <p style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "13px", color: "var(--text3)", marginBottom: "24px" }}>
+          Staff Access Only
         </p>
         <input
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           type="password"
-          className="input"
           placeholder="Password"
           autoFocus
-          style={{ marginBottom: "12px", textAlign: "center" }}
+          style={{
+            width: "100%",
+            background: "var(--bg3)",
+            border: "1px solid var(--border)",
+            borderRadius: "6px",
+            padding: "10px 14px",
+            color: "var(--text)",
+            fontFamily: "var(--font-inter, system-ui, sans-serif)",
+            fontSize: "14px",
+            outline: "none",
+            marginBottom: "12px",
+            transition: "border-color 0.15s ease"
+          }}
+          onFocus={(e) => e.currentTarget.style.borderColor = "var(--red)"}
+          onBlur={(e) => e.currentTarget.style.borderColor = "var(--border)"}
         />
-        {error && <p style={{ fontSize: "13px", color: "#ff6b6b", marginBottom: "12px", fontWeight: 600 }}>{error}</p>}
+        {error && <p style={{ fontSize: "13px", color: "var(--red)", marginBottom: "12px", fontWeight: 600 }}>{error}</p>}
         <button
           disabled={loading}
-          className="btn btn-primary"
-          style={{ width: "100%", justifyContent: "center" }}
           type="submit"
+          style={{
+            width: "100%",
+            background: "var(--red)",
+            color: "#fff",
+            fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+            fontSize: "16px",
+            letterSpacing: "0.1em",
+            padding: "12px",
+            borderRadius: "6px",
+            border: "none",
+            cursor: "pointer",
+            transition: "background 0.15s ease"
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = "var(--red2)"}
+          onMouseLeave={(e) => e.currentTarget.style.background = "var(--red)"}
         >
-          {loading ? "Verifying..." : "Sign In"}
+          {loading ? "Verifying..." : "SIGN IN"}
         </button>
       </form>
     </main>

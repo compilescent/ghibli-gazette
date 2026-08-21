@@ -2,16 +2,43 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { categoryLabel, getPostCoverImage } from "@/lib/types"
+import { categoryLabel, getPostCoverImage, categoryGradient } from "@/lib/types"
 import type { Post } from "@/lib/types"
 import ImageWithFallback from "./ImageWithFallback"
 import { useBookmarks } from "./BookmarkDrawer"
-import { Card, Badge } from "@/components/ui"
 
 function readTime(content?: string): number {
   if (!content) return 2
   const words = content.replace(/<[^>]*>/g, " ").split(/\s+/).filter(Boolean).length
   return Math.max(1, Math.ceil(words / 200))
+}
+
+function getCategoryGradient(category: string): string {
+  const gradients: Record<string, string> = {
+    "ghibli-news": "linear-gradient(135deg, #1a1535, #2d1b69)",
+    "new-release": "linear-gradient(135deg, #1a0a0a, #4a0f0f)",
+    "review": "linear-gradient(135deg, #0a1a0f, #0f3d1f)",
+    "premiere": "linear-gradient(135deg, #1a0a1a, #4a0f4a)",
+    "general": "linear-gradient(135deg, #0a0f1a, #0f204a)",
+    "anime-news": "linear-gradient(135deg, #1a100a, #4a2a0f)",
+    "manga-news": "linear-gradient(135deg, #150a1a, #3a0f4a)",
+    "industry": "linear-gradient(135deg, #0a1a18, #0f3a35)",
+  }
+  return gradients[category] || gradients["general"]
+}
+
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    "ghibli-news": "#667eea",
+    "new-release": "#E8392A",
+    "review": "#2ECC71",
+    "premiere": "#C94FAE",
+    "general": "#4A8FE8",
+    "anime-news": "#FF6B35",
+    "manga-news": "#9B59B6",
+    "industry": "#1ABC9C",
+  }
+  return colors[category] || colors["general"]
 }
 
 export default function PostCard({ post, featured }: { post: Post; featured?: boolean }) {
@@ -41,73 +68,205 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
   }
 
   return (
-    <Card variant="default" hover padding="none" className="flex flex-col h-full overflow-hidden">
-      <Link href={`/blog/${post.id}`} className="block">
-        {/* Top Real Image Panel (180px) */}
+    <Link href={`/blog/${post.id}`} style={{ textDecoration: "none", display: "block", height: "100%" }}>
+      <article className="card" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+        {/* Top Banner - Category Gradient (190px) */}
         <div
-          className="relative aspect-video overflow-hidden bg-bg-elevated"
-          style={{ flexShrink: 0 }}
+          style={{
+            height: "190px",
+            position: "relative",
+            overflow: "hidden",
+            background: getCategoryGradient(post.category),
+            borderRadius: "6px 6px 0 0"
+          }}
         >
           <ImageWithFallback
             src={imageUrl}
             alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              opacity: 0.3
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-bg-primary/60 to-transparent" />
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "linear-gradient(to top, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.4) 50%, rgba(10,10,15,0.1) 100%)"
+            }}
+          />
 
-          <Badge className="absolute top-3 left-3 z-10 shadow-lg" variant="default">
-            {categoryLabel(post.category)}
-          </Badge>
+          {/* Top Left Badge */}
+          <div style={{ position: "absolute", top: "12px", left: "12px", zIndex: 2 }}>
+            <span
+              className="badge"
+              style={{
+                fontSize: "10px",
+                padding: "2px 8px",
+                background: getCategoryColor(post.category),
+                boxShadow: "0 2px 8px rgba(0,0,0,0.5)"
+              }}
+            >
+              {categoryLabel(post.category).toUpperCase()}
+            </span>
+          </div>
 
-          {/* 1-Click Bookmark Button */}
+          {/* Bottom Left: FROM THE WEB badge for auto posts */}
+          {(post as any).aiGenerated && (
+            <div style={{ position: "absolute", bottom: "12px", left: "12px", zIndex: 2 }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+                  fontSize: "10px",
+                  letterSpacing: "0.1em",
+                  color: "var(--text3)",
+                  background: "var(--bg3)",
+                  border: "1px solid var(--border)",
+                  borderRadius: "3px",
+                  padding: "2px 8px"
+                }}
+              >
+                FROM THE WEB
+              </span>
+            </div>
+          )}
+
+          {/* Featured Badge */}
+          {(featured || post.featured) && (
+            <div style={{ position: "absolute", top: "12px", right: "12px", zIndex: 2 }}>
+              <span
+                className="badge badge-gold"
+                style={{
+                  fontSize: "10px",
+                  padding: "2px 8px",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.5)"
+                }}
+              >
+                ★ FEATURED
+              </span>
+            </div>
+          )}
+
+          {/* Bookmark Button */}
           <button
             onClick={handleBookmarkClick}
-            className="absolute top-2.5 right-2.5 z-10 w-7 h-7 rounded-full flex items-center justify-center text-sm transition-all backdrop-blur-sm border border-white/20"
             style={{
-              background: saved ? "var(--accent)" : "rgba(10, 11, 16, 0.75)",
+              position: "absolute",
+              top: "12px",
+              right: "12px",
+              zIndex: 2,
+              width: "32px",
+              height: "32px",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: "14px",
+              cursor: "pointer",
+              background: saved ? "var(--red)" : "rgba(10, 10, 15, 0.75)",
               color: "#fff",
+              border: "1px solid rgba(255,255,255,0.2)",
+              backdropFilter: "blur(4px)",
+              transition: "all 0.15s ease"
             }}
             title={saved ? "Remove from saved" : "Save for later"}
             aria-label={saved ? "Remove bookmark" : "Add bookmark"}
           >
-            {burst && <span className="sparkle-burst">✦</span>}
+            {burst && <span style={{ position: "absolute", animation: "sparkleBurst 0.6s ease-out forwards" }}>✦</span>}
             {saved ? "★" : "🔖"}
           </button>
-
-          {(featured || post.featured) && (
-            <Badge className="absolute top-3 right-10 z-10 shadow-lg" variant="gold">
-              ★ FEATURED
-            </Badge>
-          )}
         </div>
 
         {/* Content Area */}
-        <div className="p-4 flex flex-col flex-1">
-          <h3 className="font-display text-base font-bold text-text-primary line-clamp-2 group-hover:text-accent transition-colors mb-2">
+        <div style={{ padding: "14px", flex: 1, display: "flex", flexDirection: "column" }}>
+          <h3
+            className="font-playfair"
+            style={{
+              fontSize: "15px",
+              fontWeight: 700,
+              color: "var(--text)",
+              lineHeight: 1.35,
+              marginBottom: "8px",
+              transition: "color 0.15s ease",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden"
+            }}
+          >
             {post.title}
           </h3>
 
           {post.excerpt && (
-            <p className="font-inter text-sm text-text-secondary line-clamp-3 mb-4 leading-relaxed">
+            <p
+              className="line-clamp-3"
+              style={{
+                fontFamily: "var(--font-inter, system-ui, sans-serif)",
+                fontSize: "12px",
+                color: "var(--text2)",
+                lineHeight: 1.5,
+                marginBottom: "12px"
+              }}
+            >
               {post.excerpt}
             </p>
           )}
 
-          {/* Footer Metadata */}
-          <div className="mt-auto flex justify-between items-center text-xs text-text-muted pt-3 border-t border-border font-inter">
-            <div className="flex items-center gap-2">
-              <span>{dateStr}</span>
-              {post.views !== undefined && post.views > 0 && (
-                <>
-                  <span>·</span>
-                  <span>{post.views} views</span>
-                </>
-              )}
+          {/* Bottom Meta */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "auto",
+              paddingTop: "12px",
+              borderTop: "1px solid var(--border)"
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--red)", fontWeight: 500 }}>
+                {post.author}
+              </span>
             </div>
-            <span>{rt} min read</span>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--text3)" }}>
+                {dateStr}
+              </span>
+              <span style={{ color: "var(--text3)" }}>·</span>
+              <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "11px", color: "var(--text3)" }}>
+                {rt} min read
+              </span>
+            </div>
+          </div>
+
+          {/* Read More - slides up on hover */}
+          <div
+            style={{
+              marginTop: "12px",
+              opacity: 0,
+              transform: "translateY(8px)",
+              transition: "all 0.2s ease"
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)" }}
+            onMouseLeave={(e) => { e.currentTarget.style.opacity = "0"; e.currentTarget.style.transform = "translateY(8px)" }}
+          >
+            <span
+              style={{
+                fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
+                fontSize: "12px",
+                letterSpacing: "0.08em",
+                color: "var(--red)"
+              }}
+            >
+              Read More →
+            </span>
           </div>
         </div>
-      </Link>
-    </Card>
+      </article>
+    </Link>
   )
 }

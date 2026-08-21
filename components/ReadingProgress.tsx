@@ -20,7 +20,16 @@ export function ReadingProgress() {
 
   return (
     <div
-      className="fixed top-14 left-0 right-0 h-0.5 bg-bg-elevated z-40 pointer-events-none"
+      style={{
+        position: "fixed",
+        top: "56px",
+        left: 0,
+        right: 0,
+        height: "2px",
+        background: "transparent",
+        zIndex: 99,
+        pointerEvents: "none"
+      }}
       role="progressbar"
       aria-valuenow={Math.round(progress)}
       aria-valuemin={0}
@@ -28,8 +37,12 @@ export function ReadingProgress() {
       aria-label="Reading progress"
     >
       <div
-        className="h-full bg-accent origin-left transition-transform duration-100 ease-linear"
-        style={{ transform: `scaleX(${progress / 100})` }}
+        style={{
+          height: "100%",
+          background: "var(--red)",
+          width: `${progress}%`,
+          transition: "width 0.1s linear"
+        }}
       />
     </div>
   )

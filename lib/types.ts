@@ -54,14 +54,14 @@ export interface SiteSettings {
 }
 
 export const categories: { id: Category; label: string; from: string; to: string; color: string }[] = [
-  { id: "anime-news", label: "Anime News", from: "#667eea", to: "#764ba2", color: "#667eea" },
-  { id: "manga-news", label: "Manga News", from: "#43b89c", to: "#2d8a7a", color: "#2D9966" },
-  { id: "review", label: "Reviews", from: "#F4A261", to: "#E9C46A", color: "#E8643A" },
-  { id: "new-release", label: "New Releases", from: "#f093fb", to: "#f5576c", color: "#C94FAE" },
-  { id: "premiere", label: "Premieres", from: "#4facfe", to: "#00f2fe", color: "#4A90D9" },
-  { id: "industry", label: "Industry Intel", from: "#9b5de5", to: "#f15bb5", color: "#9b5de5" },
-  { id: "general", label: "General", from: "#43aa8b", to: "#90be6d", color: "#43aa8b" },
-  { id: "ghibli-news", label: "Studio Ghibli", from: "#f72585", to: "#b5179e", color: "#f72585" }
+  { id: "anime-news", label: "Anime News", from: "#1a100a", to: "#4a2a0f", color: "#FF6B35" },
+  { id: "manga-news", label: "Manga News", from: "#150a1a", to: "#3a0f4a", color: "#9B59B6" },
+  { id: "review", label: "Reviews", from: "#0a1a0f", to: "#0f3d1f", color: "#2ECC71" },
+  { id: "new-release", label: "New Releases", from: "#1a0a0a", to: "#4a0f0f", color: "#E8392A" },
+  { id: "premiere", label: "Premieres", from: "#1a0a1a", to: "#4a0f4a", color: "#C94FAE" },
+  { id: "industry", label: "Industry Intel", from: "#0a1a18", to: "#0f3a35", color: "#1ABC9C" },
+  { id: "general", label: "General", from: "#0a0f1a", to: "#0f204a", color: "#4A8FE8" },
+  { id: "ghibli-news", label: "Studio Ghibli", from: "#1a1535", to: "#2d1b69", color: "#667eea" }
 ]
 
 export function categoryLabel(category?: string | Category | null): string {
@@ -70,14 +70,14 @@ export function categoryLabel(category?: string | Category | null): string {
 
 export function categoryColor(category?: string | Category | null): string {
   const map: Record<string, string> = {
-    "anime-news": "#667eea",
-    "manga-news": "#2D9966",
-    "review": "#E8643A",
-    "new-release": "#C94FAE",
-    "premiere": "#4A90D9",
-    "industry": "#9b5de5",
-    "general": "#43aa8b",
-    "ghibli-news": "#f72585"
+    "anime-news": "#FF6B35",
+    "manga-news": "#9B59B6",
+    "review": "#2ECC71",
+    "new-release": "#E8392A",
+    "premiere": "#C94FAE",
+    "industry": "#1ABC9C",
+    "general": "#4A8FE8",
+    "ghibli-news": "#667eea"
   }
   return (category && map[category]) || "#667eea"
 }

@@ -8,6 +8,20 @@ interface LandscapeFeedProps {
   posts: Post[]
 }
 
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    "ghibli-news": "#667eea",
+    "new-release": "#E8392A",
+    "review": "#2ECC71",
+    "premiere": "#C94FAE",
+    "general": "#4A8FE8",
+    "anime-news": "#FF6B35",
+    "manga-news": "#9B59B6",
+    "industry": "#1ABC9C",
+  }
+  return colors[category] || colors["general"]
+}
+
 export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -24,8 +38,8 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
   return (
     <section
       style={{
-        padding: "36px 0 28px",
-        background: "var(--bg-secondary)",
+        padding: "24px 0 28px",
+        background: "var(--bg2)",
         borderBottom: "1px solid var(--border)",
         position: "relative"
       }}
@@ -41,19 +55,20 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
             marginBottom: "16px"
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ color: "var(--accent)", fontSize: "16px" }}>✦</span>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{ width: "3px", height: "22px", background: "var(--red)" }} />
             <h2
               style={{
                 fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-                fontSize: "18px",
-                letterSpacing: "0.12em",
-                color: "var(--text-primary)",
+                fontSize: "22px",
+                letterSpacing: "0.08em",
+                color: "var(--text)",
                 margin: 0
               }}
             >
-              SPOTLIGHT &amp; VISUAL FEEDS
+              SPOTLIGHT
             </h2>
+            <span style={{ fontFamily: "var(--font-inter, system-ui, sans-serif)", fontSize: "10px", letterSpacing: "0.2em", color: "var(--red)", textTransform: "uppercase" }}>FEATURED VISUALS</span>
           </div>
 
           <div style={{ display: "flex", gap: "6px" }}>
@@ -63,9 +78,9 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                 width: "32px",
                 height: "32px",
                 borderRadius: "50%",
-                background: "var(--bg-card)",
-                border: "1px solid var(--border-light)",
-                color: "var(--text-primary)",
+                background: "var(--card)",
+                border: "1px solid var(--border2)",
+                color: "var(--text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -73,6 +88,8 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                 transition: "all 0.15s ease"
               }}
               aria-label="Scroll left"
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border2)"; e.currentTarget.style.color = "var(--text)" }}
             >
               ‹
             </button>
@@ -82,9 +99,9 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                 width: "32px",
                 height: "32px",
                 borderRadius: "50%",
-                background: "var(--bg-card)",
-                border: "1px solid var(--border-light)",
-                color: "var(--text-primary)",
+                background: "var(--card)",
+                border: "1px solid var(--border2)",
+                color: "var(--text)",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -92,6 +109,8 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                 transition: "all 0.15s ease"
               }}
               aria-label="Scroll right"
+              onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
+              onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border2)"; e.currentTarget.style.color = "var(--text)" }}
             >
               ›
             </button>
@@ -122,7 +141,7 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                   minWidth: "300px",
                   maxWidth: "340px",
                   height: "200px",
-                  borderRadius: "10px",
+                  borderRadius: "6px",
                   overflow: "hidden",
                   position: "relative",
                   flexShrink: 0,
@@ -130,9 +149,10 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                   textDecoration: "none",
                   border: "1px solid var(--border)",
                   boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
-                  transition: "transform 0.25s ease, border-color 0.25s ease"
+                  transition: "transform 0.2s ease, border-color 0.2s ease"
                 }}
-                className="landscape-card-hover"
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.borderColor = "var(--red)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.borderColor = "var(--border)" }}
               >
                 {/* Background Image */}
                 <img
@@ -152,7 +172,7 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                     position: "absolute",
                     inset: 0,
                     background:
-                      "linear-gradient(to top, rgba(10, 11, 16, 0.95) 0%, rgba(10, 11, 16, 0.4) 60%, transparent 100%)"
+                      "linear-gradient(to top, rgba(10,10,15,0.95) 0%, rgba(10,10,15,0.4) 60%, transparent 100%)"
                   }}
                 />
 
@@ -171,12 +191,12 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                 >
                   <span
                     style={{
-                      fontSize: "9.5px",
+                      fontSize: "10px",
                       fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
                       letterSpacing: "0.1em",
-                      padding: "2px 6px",
+                      padding: "2px 8px",
                       borderRadius: "3px",
-                      background: "var(--accent)",
+                      background: getCategoryColor(post.category),
                       color: "#fff",
                       textTransform: "uppercase",
                       alignSelf: "flex-start",
@@ -188,12 +208,13 @@ export default function LandscapeFeed({ posts }: LandscapeFeedProps) {
                   <h3
                     className="line-clamp-2"
                     style={{
-                      fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)",
-                      fontSize: "14.5px",
+                      fontFamily: "var(--font-playfair, 'Playfair Display', Georgia, serif)",
+                      fontSize: "14px",
                       fontWeight: 700,
                       color: "#fff",
                       lineHeight: 1.3,
-                      margin: 0
+                      margin: 0,
+                      textShadow: "0 1px 4px rgba(0,0,0,0.8)"
                     }}
                   >
                     {post.title}

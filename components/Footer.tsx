@@ -2,6 +2,20 @@ import Link from "next/link"
 import { categories } from "@/lib/types"
 import { getSiteSettings } from "@/lib/posts"
 
+function getCategoryColor(category: string): string {
+  const colors: Record<string, string> = {
+    "ghibli-news": "#667eea",
+    "new-release": "#E8392A",
+    "review": "#2ECC71",
+    "premiere": "#C94FAE",
+    "general": "#4A8FE8",
+    "anime-news": "#FF6B35",
+    "manga-news": "#9B59B6",
+    "industry": "#1ABC9C",
+  }
+  return colors[category] || colors["general"]
+}
+
 export default async function Footer() {
   const settings = await getSiteSettings()
   const siteName = settings.siteName || "Ghibli Gazette"
@@ -9,40 +23,12 @@ export default async function Footer() {
   return (
     <footer
       style={{
-        background: "var(--bg-secondary)",
+        background: "var(--bg2)",
         borderTop: "1px solid var(--border)",
-        padding: "48px 0 32px"
+        padding: "40px 0 20px"
       }}
     >
       <div className="shell">
-        {/* Newsletter CTA Bar */}
-        <div
-          style={{
-            display: "flex",
-            flexWrap: "wrap",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "16px",
-            padding: "20px 24px",
-            marginBottom: "40px",
-            borderRadius: "10px",
-            background: "var(--bg-card)",
-            border: "1px solid var(--border)"
-          }}
-        >
-          <div>
-            <p style={{ fontFamily: "var(--font-baskerville, 'Libre Baskerville', Georgia, serif)", fontSize: "18px", fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>
-              📬 Never miss an anime drop
-            </p>
-            <p style={{ fontSize: "13px", color: "var(--text-muted)", margin: "4px 0 0" }}>
-              Daily morning briefing on anime, manga, and industry intel — straight to your inbox.
-            </p>
-          </div>
-          <Link href="/#latest-stories-section" className="btn btn-primary" style={{ borderRadius: "999px" }}>
-            Subscribe Now
-          </Link>
-        </div>
-
         <div
           style={{
             display: "grid",
@@ -51,10 +37,10 @@ export default async function Footer() {
             marginBottom: "40px"
           }}
         >
-          {/* Brand */}
+          {/* Left: Brand */}
           <div>
             <div style={{ display: "flex", alignItems: "center", gap: "2px", marginBottom: "12px" }}>
-              <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "22px", color: "var(--accent)" }}>
+              <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "24px", color: "var(--red)" }}>
                 GHIBLI
               </span>
               <span
@@ -62,79 +48,106 @@ export default async function Footer() {
                   width: "4px",
                   height: "4px",
                   borderRadius: "50%",
-                  background: "var(--accent)",
+                  background: "var(--red)",
                   margin: "0 4px"
                 }}
               />
-              <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "22px", color: "var(--text-primary)" }}>
+              <span style={{ fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)", fontSize: "24px", color: "var(--text)" }}>
                 GAZETTE
               </span>
             </div>
-            <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: 1.7, maxWidth: "260px" }}>
+            <p style={{ fontSize: "12px", color: "var(--text3)", lineHeight: 1.7, maxWidth: "260px" }}>
               {settings.tagline || "Your anime & manga news hub: reviews, releases, premieres, and industry intel."}
             </p>
+            <div style={{ display: "flex", gap: "10px", marginTop: "16px" }}>
+              <a
+                href={settings.twitter || "#"}
+                className="social-icon"
+                aria-label="Twitter"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--border)", color: "var(--text2)", fontSize: "14px", transition: "all 0.15s ease" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text2)" }}
+              >
+                𝕏
+              </a>
+              <a
+                href={settings.discord || "#"}
+                className="social-icon"
+                aria-label="Discord"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--border)", color: "var(--text2)", fontSize: "14px", transition: "all 0.15s ease" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text2)" }}
+              >
+                💬
+              </a>
+              <a
+                href={settings.instagram || "#"}
+                className="social-icon"
+                aria-label="Instagram"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--border)", color: "var(--text2)", fontSize: "14px", transition: "all 0.15s ease" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text2)" }}
+              >
+                📷
+              </a>
+              <a
+                href="/rss.xml"
+                className="social-icon"
+                aria-label="RSS Feed"
+                style={{ display: "flex", alignItems: "center", justifyContent: "center", width: "36px", height: "36px", borderRadius: "50%", border: "1px solid var(--border)", color: "var(--text2)", fontSize: "14px", transition: "all 0.15s ease" }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.color = "var(--text2)" }}
+              >
+                📡
+              </a>
+            </div>
           </div>
 
-          {/* Categories */}
+          {/* Center: Categories */}
           <div>
             <h3
               style={{
                 fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-                fontSize: "13px",
-                letterSpacing: "0.15em",
-                color: "var(--text-muted)",
-                marginBottom: "16px"
+                fontSize: "14px",
+                letterSpacing: "0.1em",
+                color: "var(--text3)",
+                marginBottom: "16px",
+                textTransform: "uppercase"
               }}
             >
               CATEGORIES
             </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {categories.map((cat) => (
-                <Link key={cat.id} href={`/category/${cat.id}`} className="footer-link">
+                <Link key={cat.id} href={`/category/${cat.id}`} className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>
                   {cat.label}
                 </Link>
               ))}
             </div>
           </div>
 
-          {/* Navigation */}
+          {/* Right: Navigate */}
           <div>
             <h3
               style={{
                 fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-                fontSize: "13px",
-                letterSpacing: "0.15em",
-                color: "var(--text-muted)",
-                marginBottom: "16px"
+                fontSize: "14px",
+                letterSpacing: "0.1em",
+                color: "var(--text3)",
+                marginBottom: "16px",
+                textTransform: "uppercase"
               }}
             >
               NAVIGATE
             </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <Link href="/" className="footer-link">Home</Link>
-              <Link href="/archive" className="footer-link">Full Archive</Link>
-              <Link href="/rss.xml" className="footer-link">RSS Feed</Link>
-              <Link href="/admin" className="footer-link">Write a Story</Link>
-            </div>
-          </div>
-
-          {/* Company */}
-          <div>
-            <h3
-              style={{
-                fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
-                fontSize: "13px",
-                letterSpacing: "0.15em",
-                color: "var(--text-muted)",
-                marginBottom: "16px"
-              }}
-            >
-              ABOUT
-            </h3>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-              <Link href="/about" className="footer-link">About {siteName}</Link>
-              <Link href="/contact" className="footer-link">Contact</Link>
-              <Link href="/privacy" className="footer-link">Privacy Policy</Link>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <Link href="/" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>Home</Link>
+              <Link href="/archive" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>Full Archive</Link>
+              <Link href="/rss.xml" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>RSS Feed</Link>
+              <Link href="/admin" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>Write a Story</Link>
+              <Link href="/about" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>About</Link>
+              <Link href="/contact" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>Contact</Link>
+              <Link href="/privacy" className="footer-link" style={{ fontSize: "12px", color: "var(--text2)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>Privacy Policy</Link>
             </div>
           </div>
         </div>
@@ -143,7 +156,7 @@ export default async function Footer() {
         <div
           style={{
             borderTop: "1px solid var(--border)",
-            paddingTop: "24px",
+            paddingTop: "16px",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -151,10 +164,13 @@ export default async function Footer() {
             gap: "12px"
           }}
         >
-          <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>
+          <p style={{ fontSize: "11px", color: "var(--text3)" }}>
             © {new Date().getFullYear()} {siteName}. All rights reserved.
           </p>
-          <p style={{ fontSize: "12px", color: "var(--text-muted)" }}>Anime & Manga News Hub</p>
+          <div style={{ display: "flex", gap: "20px" }}>
+            <Link href="/privacy" style={{ fontSize: "11px", color: "var(--text3)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text3)"}>Privacy</Link>
+            <Link href="/terms" style={{ fontSize: "11px", color: "var(--text3)", textDecoration: "none", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--red)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text3)"}>Terms</Link>
+          </div>
         </div>
       </div>
     </footer>
