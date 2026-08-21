@@ -89,7 +89,7 @@ export default function PostCard({ post, featured }: { post: Post; featured?: bo
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              opacity: 0.3
+              opacity: 0.85
             }}
           />
           <div

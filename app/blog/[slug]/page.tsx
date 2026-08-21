@@ -167,7 +167,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
               }}
               aria-label="Breadcrumb"
             >
-              <Link href="/" style={{ textDecoration: "none", color: "var(--text2)", transition: "color 0.15s ease" }} onMouseEnter={(e) => e.currentTarget.style.color = "var(--text)"} onMouseLeave={(e) => e.currentTarget.style.color = "var(--text2)"}>
+              <Link href="/" className="breadcrumb-link" style={{ textDecoration: "none", color: "var(--text2)" }}>
                 Home
               </Link>
               <span>›</span>
@@ -252,8 +252,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                 <Link
                   href={`/author/${encodeURIComponent(authorName)}`}
                   style={{ color: "var(--red)", fontWeight: 600, fontSize: "12px", textDecoration: "none" }}
-                  onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
-                  onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
+                  className="author-link"
                 >
                   {authorName}
                 </Link>
@@ -295,14 +294,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  opacity: 0.3
+                  opacity: 0.8
                 }}
               />
               <div
                 style={{
                   position: "absolute",
                   inset: 0,
-                  background: "linear-gradient(to top, rgba(10,10,15,0.9) 0%, rgba(10,10,15,0.3) 50%, rgba(10,10,15,0) 100%)"
+                  background: "linear-gradient(to top, rgba(10,10,15,0.4) 0%, rgba(10,10,15,0) 100%)"
                 }}
               />
             </div>
@@ -335,6 +334,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   <Link
                     key={tag}
                     href={`/tag/${encodeURIComponent(tag)}`}
+                    className="post-tag"
                     style={{
                       fontSize: "12px",
                       fontWeight: 500,
@@ -346,8 +346,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                       textDecoration: "none",
                       transition: "all 0.15s ease"
                     }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.color = "var(--red)" }}
-                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border2)"; e.currentTarget.style.color = "var(--text2)" }}
                   >
                     #{tag}
                   </Link>
@@ -398,8 +396,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                     background: "var(--card)",
                     transition: "all 0.15s ease"
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.transform = "translateY(-2px)" }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)" }}
                 >
                   <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text3)" }}>
                     ← Newer story
@@ -424,8 +420,6 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                     textAlign: "right",
                     transition: "all 0.15s ease"
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--red)"; e.currentTarget.style.transform = "translateY(-2px)" }}
-                  onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--border)"; e.currentTarget.style.transform = "translateY(0)" }}
                 >
                   <span style={{ fontSize: "11px", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--text3)" }}>
                     Older story →
@@ -520,7 +514,10 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       <Footer />
       <MascotButton />
       <style>{`
-        .prev-next-card:hover { border-color: var(--red) !important; }
+        .breadcrumb-link:hover { color: var(--text) !important; }
+        .author-link:hover { text-decoration: underline !important; }
+        .post-tag:hover { border-color: var(--red) !important; color: var(--red) !important; }
+        .prev-next-card:hover { border-color: var(--red) !important; transform: translateY(-2px); }
       `}</style>
     </div>
   )

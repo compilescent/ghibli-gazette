@@ -126,7 +126,7 @@ export default async function HomePage() {
                         width: "100%",
                         height: "100%",
                         objectFit: "cover",
-                        opacity: 0.4
+                        opacity: 0.85
                       }}
                     />
                     <div
@@ -212,12 +212,8 @@ export default async function HomePage() {
                           fontFamily: "var(--font-bebas, 'Bebas Neue', sans-serif)",
                           fontSize: "13px",
                           letterSpacing: "0.08em",
-                          color: "var(--red)",
-                          textDecoration: "none",
-                          transition: "text-decoration 0.15s ease"
+                          color: "var(--red)"
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.textDecoration = "underline"}
-                        onMouseLeave={(e) => e.currentTarget.style.textDecoration = "none"}
                       >
                         Read Article →
                       </span>
@@ -248,11 +244,8 @@ export default async function HomePage() {
                           display: "flex",
                           height: "100%",
                           minHeight: "130px",
-                          padding: "0",
-                          transition: "all 0.2s ease"
+                          padding: "0"
                         }}
-                        onMouseEnter={(e) => { e.currentTarget.style.background = "var(--bg3)"; e.currentTarget.style.borderColor = "var(--red)" }}
-                        onMouseLeave={(e) => { e.currentTarget.style.background = "var(--card)"; e.currentTarget.style.borderColor = "var(--border)" }}
                       >
                         <div
                           style={{
@@ -273,7 +266,7 @@ export default async function HomePage() {
                               width: "100%",
                               height: "100%",
                               objectFit: "cover",
-                              opacity: 0.6
+                              opacity: 0.9
                             }}
                           />
                         </div>
